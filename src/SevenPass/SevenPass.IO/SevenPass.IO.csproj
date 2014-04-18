@@ -46,7 +46,9 @@
     </Compile>
     <Compile Include="Crypto\HashingStreamEx.cs" />
     <Compile Include="FileFormat.cs" />
-    <Compile Include="Models\FileMetadata.cs" />
+    <Compile Include="Models\FileFormats.cs" />
+    <Compile Include="Models\FileHeaders.cs" />
+    <Compile Include="Models\ReadHeaderResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
