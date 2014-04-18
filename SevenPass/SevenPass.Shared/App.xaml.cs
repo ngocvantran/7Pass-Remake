@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml.Controls;
 using Caliburn.Micro;
+using SevenPass.Services.Cache;
 using SevenPass.ViewModels;
+using SevenPass.Views;
 
 namespace SevenPass
 {
-    /// <summary>
-    /// Provides application-specific behavior to supplement the default Application class.
-    /// </summary>
     public sealed partial class App
     {
         private WinRTContainer _container;
+        private INavigationService _navigation;
 
         public App()
         {
@@ -28,6 +28,10 @@ namespace SevenPass
         {
             _container = new WinRTContainer();
             _container.RegisterWinRTServices();
+
+            _container.PerRequest<MainViewModel>();
+            _container.PerRequest<DatabaseViewModel>();
+            _container.Singleton<ICacheService, CacheService>();
         }
 
         protected override IEnumerable<object> GetAllInstances(Type service)
@@ -42,12 +46,32 @@ namespace SevenPass
 
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
-            DisplayRootViewFor<MainViewModel>();
+            DisplayRootView<MainView>();
         }
 
         protected override void PrepareViewFirst(Frame rootFrame)
         {
-            _container.RegisterNavigationService(rootFrame);
+            _navigation = _container.RegisterNavigationService(rootFrame);
+
+#if WINDOWS_PHONE_APP
+            rootFrame.Loaded += (sender, args) =>
+            {
+                Windows.Phone.UI.Input.HardwareButtons.BackPressed += OnHardwareBackPressed;
+            };
+            rootFrame.Unloaded += (sender, args) =>
+            {
+                Windows.Phone.UI.Input.HardwareButtons.BackPressed -= OnHardwareBackPressed;
+            };
+        }
+
+        private void OnHardwareBackPressed(object sender, Windows.Phone.UI.Input.BackPressedEventArgs e)
+        {
+            if (!_navigation.CanGoBack)
+                return;
+
+            e.Handled = true;
+            _navigation.GoBack();
+#endif
         }
     }
 }
