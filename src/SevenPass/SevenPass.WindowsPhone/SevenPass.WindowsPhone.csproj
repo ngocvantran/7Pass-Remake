@@ -82,6 +82,9 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\GlobalInfo.cs">
+      <Link>Properties\GlobalInfo.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\DatabaseItemView.xaml.cs">
       <DependentUpon>DatabaseItemView.xaml</DependentUpon>
@@ -126,7 +129,12 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\SevenPass.IO\SevenPass.IO.csproj">
+      <Project>{9f1441bf-222e-4589-a7b7-4db6bdad796b}</Project>
+      <Name>SevenPass.IO</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Page Include="Views\DatabaseItemView.xaml">
       <SubType>Designer</SubType>
