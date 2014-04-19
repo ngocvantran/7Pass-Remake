@@ -73,31 +73,25 @@ namespace SevenPass.IO
             return AsyncInfo.Run<IBuffer, uint>(async (token, progress) =>
             {
                 var transforms = 0UL;
+                var master = GetMasterKey();
 
                 // AES - ECB
                 var aes = SymmetricKeyAlgorithmProvider
                     .OpenAlgorithm(SymmetricAlgorithmNames.AesEcb);
                 var key = aes.CreateSymmetricKey(seed);
 
-                // Split raw master key to 16 bytes blocks
-                var master = GetMasterKey();
-                var first = CryptographicBuffer.CreateFromByteArray(
-                    master.ToArray(0, 16));
-                var second = CryptographicBuffer.CreateFromByteArray(
-                    master.ToArray(16, 16));
 
                 while (true)
                 {
                     // Report progress
                     token.ThrowIfCancellationRequested();
                     progress.Report((uint)Math.Round(
-                        transforms * 100F / rounds));
+                        transforms*100F/rounds));
 
                     for (var i = 0; i < 1000; i++)
                     {
                         // Transform master key
-                        first = CryptographicEngine.Encrypt(key, first, null);
-                        second = CryptographicEngine.Encrypt(key, second, null);
+                        master = CryptographicEngine.Encrypt(key, master, null);
 
                         transforms++;
                         if (transforms < rounds)
@@ -105,13 +99,10 @@ namespace SevenPass.IO
 
                         // Completed
                         progress.Report(100);
-                        first.CopyTo(0, master, 0, 16);
-                        second.CopyTo(0, master, 16, 16);
-
                         master = HashAlgorithmProvider
                             .OpenAlgorithm(HashAlgorithmNames.Sha256)
                             .HashData(master);
-                        
+
                         return master;
                     }
                 }
