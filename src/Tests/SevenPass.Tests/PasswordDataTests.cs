@@ -68,6 +68,20 @@ namespace SevenPass.Tests
         }
 
         [Test]
+        public async Task Should_support_random_keyfile()
+        {
+            using (var input = TestFiles.Read("Demo7Pass.txt"))
+            {
+                var data = new PasswordData();
+                await data.AddKeyFile(input);
+
+                Assert.AreEqual(
+                    "F6-25-B4-EF-8C-CB-B1-6F-FC-D9-6B-F0-74-2A-5B-F5-5E-33-9F-82-6E-C1-03-CF-A1-3B-1D-97-D3-86-0C-2E",
+                    BitConverter.ToString(data.GetMasterKey().ToArray()));
+            }
+        }
+
+        [Test]
         public async Task Should_support_xml_keyfile()
         {
             using (var input = TestFiles.Read("Demo7Pass.key"))

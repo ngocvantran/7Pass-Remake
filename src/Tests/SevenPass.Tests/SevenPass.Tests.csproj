@@ -65,9 +65,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Demo7Pass.kdbx" />
     <EmbeddedResource Include="Demo7Pass.key" />
-    <None Include="Demo7Pass.bin" />
-    <None Include="Demo7Pass.hex" />
+    <EmbeddedResource Include="Demo7Pass.bin" />
+    <EmbeddedResource Include="Demo7Pass.hex" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Demo7Pass.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
