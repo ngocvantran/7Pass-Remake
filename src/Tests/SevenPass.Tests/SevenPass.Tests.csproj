@@ -53,7 +53,9 @@
     <Compile Include="Crypto\HashedInputStreamTests.cs" />
     <Compile Include="Crypto\HashedOutputStreamTests.cs" />
     <Compile Include="FileFormatTests.cs" />
+    <Compile Include="PasswordDataTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestFiles.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="nunit.framework">
@@ -62,6 +64,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Demo7Pass.kdbx" />
+    <EmbeddedResource Include="Demo7Pass.key" />
+    <None Include="Demo7Pass.bin" />
+    <None Include="Demo7Pass.hex" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
