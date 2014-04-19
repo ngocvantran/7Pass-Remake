@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Windows.Security.Cryptography;
 using NUnit.Framework;
 using SevenPass.IO;
 
@@ -93,6 +94,23 @@ namespace SevenPass.Tests
                     "2E-6F-69-54-FA-AD-F3-6C-27-B7-2D-93-DA-06-A8-F5-41-CC-54-C4-D4-E8-4D-B8-86-C0-E0-6E-99-AB-8E-48",
                     BitConverter.ToString(data.GetMasterKey().ToArray()));
             }
+        }
+
+        [Test]
+        public async Task Should_transform_master_key()
+        {
+            var data = new PasswordData
+            {
+                Password = "demo",
+            };
+
+            var seed = CryptographicBuffer.DecodeFromHexString(
+                "9525F6992BEB739CBAA73AE6E050627FCAFF378D3CD6F6C232D20AA92F6D0927");
+
+            var masterKey = await data.GetMasterKey(seed, 6000);
+            Assert.AreEqual(
+                "87730050341ff55c46421f2f2a5f4e1e018d0443d19cacc8682f128f1874d0a4",
+                CryptographicBuffer.EncodeToHexString(masterKey));
         }
     }
 }

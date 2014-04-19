@@ -1,9 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
+using Windows.Foundation;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
@@ -57,6 +59,63 @@ namespace SevenPass.IO
                 hash.Append(_keyFile);
 
             return hash.GetValueAndReset();
+        }
+
+        /// <summary>
+        /// Gets the transformed master key.
+        /// </summary>
+        /// <param name="seed">The transformation seed.</param>
+        /// <param name="rounds">The number of transformation rounds.</param>
+        /// <returns>The transformation operation.</returns>
+        public IAsyncOperationWithProgress<IBuffer, uint>
+            GetMasterKey(IBuffer seed, ulong rounds)
+        {
+            return AsyncInfo.Run<IBuffer, uint>(async (token, progress) =>
+            {
+                var transforms = 0UL;
+
+                // AES - ECB
+                var aes = SymmetricKeyAlgorithmProvider
+                    .OpenAlgorithm(SymmetricAlgorithmNames.AesEcb);
+                var key = aes.CreateSymmetricKey(seed);
+
+                // Split raw master key to 16 bytes blocks
+                var master = GetMasterKey();
+                var first = CryptographicBuffer.CreateFromByteArray(
+                    master.ToArray(0, 16));
+                var second = CryptographicBuffer.CreateFromByteArray(
+                    master.ToArray(16, 16));
+
+                while (true)
+                {
+                    // Report progress
+                    token.ThrowIfCancellationRequested();
+                    progress.Report((uint)Math.Round(
+                        transforms * 100F / rounds));
+
+                    for (var i = 0; i < 1000; i++)
+                    {
+                        // Transform master key
+                        first = CryptographicEngine.Encrypt(key, first, null);
+                        second = CryptographicEngine.Encrypt(key, second, null);
+
+                        transforms++;
+                        if (transforms < rounds)
+                            continue;
+
+                        // Completed
+                        progress.Report(100);
+                        first.CopyTo(0, master, 0, 16);
+                        second.CopyTo(0, master, 16, 16);
+
+                        master = HashAlgorithmProvider
+                            .OpenAlgorithm(HashAlgorithmNames.Sha256)
+                            .HashData(master);
+                        
+                        return master;
+                    }
+                }
+            });
         }
 
         /// <summary>
