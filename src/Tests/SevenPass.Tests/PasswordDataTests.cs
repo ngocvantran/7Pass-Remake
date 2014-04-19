@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Security.Cryptography;
 using NUnit.Framework;
@@ -18,9 +17,10 @@ namespace SevenPass.Tests
                 var data = new PasswordData();
                 await data.AddKeyFile(input);
 
+                var master = data.GetMasterKey();
                 Assert.AreEqual(
-                    "96-4B-38-32-86-FB-A5-15-81-E8-44-76-25-76-67-1B-A0-2F-62-DC-98-34-A0-D4-95-4A-6D-00-23-D8-79-E8",
-                    BitConverter.ToString(data.GetMasterKey().ToArray()));
+                    "964b383286fba51581e844762576671ba02f62dc9834a0d4954a6d0023d879e8",
+                    CryptographicBuffer.EncodeToHexString(master));
             }
         }
 
@@ -32,9 +32,10 @@ namespace SevenPass.Tests
                 var data = new PasswordData();
                 await data.AddKeyFile(input);
 
+                var master = data.GetMasterKey();
                 Assert.AreEqual(
-                    "96-4B-38-32-86-FB-A5-15-81-E8-44-76-25-76-67-1B-A0-2F-62-DC-98-34-A0-D4-95-4A-6D-00-23-D8-79-E8",
-                    BitConverter.ToString(data.GetMasterKey().ToArray()));
+                    "964b383286fba51581e844762576671ba02f62dc9834a0d4954a6d0023d879e8",
+                    CryptographicBuffer.EncodeToHexString(master));
             }
         }
 
@@ -49,9 +50,10 @@ namespace SevenPass.Tests
                 };
                 await data.AddKeyFile(input);
 
+                var master = data.GetMasterKey();
                 Assert.AreEqual(
-                    "F7-8B-E1-03-50-F0-4C-C8-7D-3F-70-30-EE-DE-60-E3-37-99-C6-66-53-16-97-5B-B4-42-F8-B8-03-BD-6B-AA",
-                    BitConverter.ToString(data.GetMasterKey().ToArray()));
+                    "f78be10350f04cc87d3f7030eede60e33799c6665316975bb442f8b803bd6baa",
+                    CryptographicBuffer.EncodeToHexString(master));
             }
         }
 
@@ -63,9 +65,10 @@ namespace SevenPass.Tests
                 Password = "demo",
             };
 
+            var master = data.GetMasterKey();
             Assert.AreEqual(
-                "17-59-39-01-89-83-AB-CA-A4-02-9B-A8-1E-61-AD-BA-A6-3F-3F-AB-E3-8B-ED-84-A9-ED-D0-3B-EA-58-7A-DE",
-                BitConverter.ToString(data.GetMasterKey().ToArray()));
+                "175939018983abcaa4029ba81e61adbaa63f3fabe38bed84a9edd03bea587ade",
+                CryptographicBuffer.EncodeToHexString(master));
         }
 
         [Test]
@@ -76,9 +79,10 @@ namespace SevenPass.Tests
                 var data = new PasswordData();
                 await data.AddKeyFile(input);
 
+                var master = data.GetMasterKey();
                 Assert.AreEqual(
-                    "F6-25-B4-EF-8C-CB-B1-6F-FC-D9-6B-F0-74-2A-5B-F5-5E-33-9F-82-6E-C1-03-CF-A1-3B-1D-97-D3-86-0C-2E",
-                    BitConverter.ToString(data.GetMasterKey().ToArray()));
+                    "f625b4ef8ccbb16ffcd96bf0742a5bf55e339f826ec103cfa13b1d97d3860c2e",
+                    CryptographicBuffer.EncodeToHexString(master));
             }
         }
 
@@ -90,9 +94,10 @@ namespace SevenPass.Tests
                 var data = new PasswordData();
                 await data.AddKeyFile(input);
 
+                var master = data.GetMasterKey();
                 Assert.AreEqual(
-                    "2E-6F-69-54-FA-AD-F3-6C-27-B7-2D-93-DA-06-A8-F5-41-CC-54-C4-D4-E8-4D-B8-86-C0-E0-6E-99-AB-8E-48",
-                    BitConverter.ToString(data.GetMasterKey().ToArray()));
+                    "2e6f6954faadf36c27b72d93da06a8f541cc54c4d4e84db886c0e06e99ab8e48",
+                    CryptographicBuffer.EncodeToHexString(master));
             }
         }
 

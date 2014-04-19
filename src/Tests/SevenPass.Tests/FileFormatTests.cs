@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Security.Cryptography;
@@ -90,7 +88,7 @@ namespace SevenPass.Tests
                 IBuffer buffer = new Buffer(512);
                 buffer = await database.ReadAsync(
                     buffer, 512, InputStreamOptions.None);
-                
+
                 await file.WriteAsync(buffer);
                 file.Seek(8);
 
