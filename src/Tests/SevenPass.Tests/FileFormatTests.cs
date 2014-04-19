@@ -14,6 +14,39 @@ namespace SevenPass.Tests
     public class FileFormatTests
     {
         [Test]
+        public async Task Headers_should_detect_1x_file_format()
+        {
+            using (var file = new InMemoryRandomAccessStream())
+            {
+                await file.WriteAsync(CryptographicBuffer
+                    .DecodeFromHexString("03D9A29A65FB4BB5"));
+
+                file.Seek(0);
+                var result = await FileFormat.Headers(file);
+
+                Assert.IsNull(result.Headers);
+                Assert.AreEqual(FileFormats.KeePass1x, result.Format);
+            }
+        }
+
+        [Test]
+        public async Task Headers_should_detect_new_format()
+        {
+            using (var file = new InMemoryRandomAccessStream())
+            {
+                // Schema: 4.01
+                await file.WriteAsync(CryptographicBuffer
+                    .DecodeFromHexString("03D9A29A67FB4BB501000400"));
+
+                file.Seek(0);
+                var result = await FileFormat.Headers(file);
+
+                Assert.IsNull(result.Headers);
+                Assert.AreEqual(FileFormats.NewVersion, result.Format);
+            }
+        }
+
+        [Test]
         public async Task Headers_should_detect_not_supported_files()
         {
             using (var file = new InMemoryRandomAccessStream())
@@ -30,18 +63,48 @@ namespace SevenPass.Tests
         }
 
         [Test]
-        public async Task Headers_should_detect_1x_file_format()
+        public async Task Headers_should_detect_old_format()
         {
             using (var file = new InMemoryRandomAccessStream())
             {
+                // Schema; 2.01
                 await file.WriteAsync(CryptographicBuffer
-                    .DecodeFromHexString("03D9A29A65FB4BB5"));
+                    .DecodeFromHexString("03D9A29A67FB4BB501000200"));
 
                 file.Seek(0);
                 var result = await FileFormat.Headers(file);
 
                 Assert.IsNull(result.Headers);
-                Assert.AreEqual(FileFormats.KeePass1x, result.Format);
+                Assert.AreEqual(FileFormats.OldVersion, result.Format);
+            }
+        }
+
+        [Test]
+        public async Task Headers_should_detect_partial_support_format()
+        {
+            var assembly = GetType().GetTypeInfo().Assembly;
+            var database = assembly.GetManifestResourceStream(
+                "SevenPass.Tests.Demo7Pass.kdbx");
+
+            using (var file = new InMemoryRandomAccessStream())
+            {
+                var temp = new byte[512];
+                database.Read(temp, 0, temp.Length);
+
+                await file.WriteAsync(CryptographicBuffer
+                    .CreateFromByteArray(temp));
+
+                file.Seek(8);
+
+                // Schema; 3.Max
+                await file.WriteAsync(CryptographicBuffer
+                    .DecodeFromHexString("FFFF0300"));
+
+                file.Seek(0);
+                var result = await FileFormat.Headers(file);
+
+                Assert.IsNotNull(result.Headers);
+                Assert.AreEqual(FileFormats.PartialSupported, result.Format);
             }
         }
 
@@ -78,65 +141,34 @@ namespace SevenPass.Tests
         }
 
         [Test]
-        public async Task Headers_should_detect_old_format()
-        {
-            using (var file = new InMemoryRandomAccessStream())
-            {
-                // Schema; 2.01
-                await file.WriteAsync(CryptographicBuffer
-                    .DecodeFromHexString("03D9A29A67FB4BB501000200"));
-
-                file.Seek(0);
-                var result = await FileFormat.Headers(file);
-
-                Assert.IsNull(result.Headers);
-                Assert.AreEqual(FileFormats.OldVersion, result.Format);
-            }
-        }
-
-        [Test]
-        public async Task Headers_should_detect_partial_support_format()
+        public async Task Headers_should_parse_fields()
         {
             var assembly = GetType().GetTypeInfo().Assembly;
             var database = assembly.GetManifestResourceStream(
                 "SevenPass.Tests.Demo7Pass.kdbx");
 
-            using (var file = new InMemoryRandomAccessStream())
+            using (var input = database.AsRandomAccessStream())
             {
-                var temp = new byte[512];
-                database.Read(temp, 0, temp.Length);
+                var result = await FileFormat.Headers(input);
 
-                await file.WriteAsync(CryptographicBuffer
-                    .CreateFromByteArray(temp));
+                var headers = result.Headers;
+                Assert.IsNotNull(headers);
                 
-                file.Seek(8);
+                Assert.IsTrue(headers.UseGZip);
+                Assert.AreEqual(6000, headers.TransformRounds);
 
-                // Schema; 3.Max
-                await file.WriteAsync(CryptographicBuffer
-                    .DecodeFromHexString("FFFF0300"));
-
-                file.Seek(0);
-                var result = await FileFormat.Headers(file);
-
-                Assert.IsNotNull(result.Headers);
-                Assert.AreEqual(FileFormats.PartialSupported, result.Format);
-            }
-        }
-
-        [Test]
-        public async Task Headers_should_detect_new_format()
-        {
-            using (var file = new InMemoryRandomAccessStream())
-            {
-                // Schema: 4.01
-                await file.WriteAsync(CryptographicBuffer
-                    .DecodeFromHexString("03D9A29A67FB4BB501000400"));
-
-                file.Seek(0);
-                var result = await FileFormat.Headers(file);
-
-                Assert.IsNull(result.Headers);
-                Assert.AreEqual(FileFormats.NewVersion, result.Format);
+                Assert.AreEqual(
+                    "2B-46-56-39-9A-5B-DF-9F-DF-E9-E8-70-5A-34-B6-F4-84-F9-B1-B9-40-C3-D7-CF-B7-FF-EC-E3-B6-34-E0-AE",
+                    BitConverter.ToString(headers.MasterSeed));
+                Assert.AreEqual(
+                    "95-25-F6-99-2B-EB-73-9C-BA-A7-3A-E6-E0-50-62-7F-CA-FF-37-8D-3C-D6-F6-C2-32-D2-0A-A9-2F-6D-09-27",
+                    BitConverter.ToString(headers.TransformSeed));
+                Assert.AreEqual(
+                    "F3-60-C2-9E-1A-60-3A-65-48-CF-BB-28-DA-6F-FF-50",
+                    BitConverter.ToString(headers.EncryptionIV));
+                Assert.AreEqual(
+                    "54-34-7F-E3-2F-3E-DB-CC-AE-1F-C6-0F-72-C1-1D-AF-D0-A7-24-87-B3-15-F9-B1-74-ED-10-73-ED-67-A6-E0",
+                    BitConverter.ToString(headers.StartBytes));
             }
         }
     }

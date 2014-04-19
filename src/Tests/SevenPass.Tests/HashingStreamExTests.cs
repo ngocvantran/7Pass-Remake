@@ -5,6 +5,7 @@ using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
 using NUnit.Framework;
+using SevenPass.IO;
 using SevenPass.IO.Crypto;
 
 namespace SevenPass.Tests
@@ -34,8 +35,7 @@ namespace SevenPass.Tests
                     for (var i = 0; i < 8; i++)
                     {
                         await hashed.ReadAsync(
-                            buffer, buffer.Capacity,
-                            InputStreamOptions.None);
+                            buffer, buffer.Capacity);
                     }
 
                     hashed.Dispose();

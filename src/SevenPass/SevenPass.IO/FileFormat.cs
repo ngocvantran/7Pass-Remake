@@ -25,8 +25,8 @@ namespace SevenPass.IO
             IBuffer buffer = new Windows.Storage.Streams.Buffer(2048);
 
             // Signature
-            buffer = await input.ReadAsync(buffer,
-                8, InputStreamOptions.None);
+            buffer = await input.ReadAsync(buffer, 8);
+
             var format = CheckSignature(buffer);
             if (format != FileFormats.Supported)
             {
@@ -37,8 +37,8 @@ namespace SevenPass.IO
             }
 
             // Schema version
-            buffer = await input.ReadAsync(
-                buffer, 4, InputStreamOptions.None);
+            buffer = await input.ReadAsync(buffer, 4);
+
             var version = GetVersion(buffer);
             format = CheckCompatibility(version);
             switch (format)
@@ -55,7 +55,12 @@ namespace SevenPass.IO
             }
 
             // Fields
-            throw new NotImplementedException();
+            var headers = await GetHeaders(input, buffer);
+            return new ReadHeaderResult
+            {
+                Format = format,
+                Headers = headers,
+            };
         }
 
         /// <summary>
@@ -105,6 +110,59 @@ namespace SevenPass.IO
                 return FileFormats.NotSupported;
 
             return FileFormats.Supported;
+        }
+
+        /// <summary>
+        /// Parse the headers fields.
+        /// </summary>
+        /// <param name="input">The input stream.</param>
+        /// <param name="buffer">The header bytes reader.</param>
+        /// <returns>The file headers.</returns>
+        private static async Task<FileHeaders> GetHeaders(
+            IInputStream input, IBuffer buffer)
+        {
+            var result = new FileHeaders();
+
+            while (true)
+            {
+                buffer = await input.ReadAsync(buffer, 3);
+                var field = (HeaderFields)buffer.GetByte(0);
+                var size = BitConverter.ToUInt16(buffer.ToArray(1, 2), 0);
+
+                if (size > 0)
+                    buffer = await input.ReadAsync(buffer, size);
+
+                switch (field)
+                {
+                    case HeaderFields.EndOfHeader:
+                        return result;
+
+                    case HeaderFields.CompressionFlags:
+                        result.UseGZip = buffer.GetByte(0) == 1;
+                        break;
+
+                    case HeaderFields.EncryptionIV:
+                        result.EncryptionIV = buffer.ToArray();
+                        break;
+
+                    case HeaderFields.MasterSeed:
+                        result.MasterSeed = buffer.ToArray();
+                        break;
+
+                    case HeaderFields.StreamStartBytes:
+                        result.StartBytes = buffer.ToArray();
+                        break;
+
+                    case HeaderFields.TransformSeed:
+                        result.TransformSeed = buffer.ToArray();
+                        break;
+
+                    case HeaderFields.TransformRounds:
+                        result.TransformRounds = BitConverter.ToUInt64(
+                            buffer.ToArray(), 0);
+                        break;
+                }
+            }
         }
 
         /// <summary>
