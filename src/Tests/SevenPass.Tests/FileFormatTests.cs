@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Security.Cryptography;
 using Windows.Storage.Streams;
@@ -153,7 +154,7 @@ namespace SevenPass.Tests
 
                 var headers = result.Headers;
                 Assert.IsNotNull(headers);
-                
+
                 Assert.IsTrue(headers.UseGZip);
                 Assert.AreEqual(6000, headers.TransformRounds);
 
@@ -169,6 +170,9 @@ namespace SevenPass.Tests
                 Assert.AreEqual(
                     "54-34-7F-E3-2F-3E-DB-CC-AE-1F-C6-0F-72-C1-1D-AF-D0-A7-24-87-B3-15-F9-B1-74-ED-10-73-ED-67-A6-E0",
                     BitConverter.ToString(headers.StartBytes));
+                Assert.AreEqual(
+                    "5B-A6-2E-1B-5D-5D-FB-CB-29-5E-F3-BD-2B-62-7E-74-B1-41-D7-DB-3E-19-59-FC-E5-39-34-2B-A3-76-21-21",
+                    BitConverter.ToString(headers.Hash.ToArray()));
             }
         }
     }

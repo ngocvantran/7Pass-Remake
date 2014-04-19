@@ -1,4 +1,5 @@
 ﻿using System;
+using Windows.Storage.Streams;
 
 namespace SevenPass.IO.Models
 {
@@ -11,6 +12,11 @@ namespace SevenPass.IO.Models
         /// Gets or sets the encryption IV.
         /// </summary>
         public byte[] EncryptionIV { get; set; }
+
+        /// <summary>
+        /// Gets or sets the header hash.
+        /// </summary>
+        public IBuffer Hash { get; set; }
 
         /// <summary>
         /// Gets or sets the master seed.

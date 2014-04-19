@@ -3,6 +3,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Security.Cryptography;
 using Windows.Storage.Streams;
+using SevenPass.IO.Crypto;
 using SevenPass.IO.Models;
 
 namespace SevenPass.IO
@@ -22,45 +23,49 @@ namespace SevenPass.IO
             if (input == null)
                 throw new ArgumentNullException("input");
 
-            IBuffer buffer = new Windows.Storage.Streams.Buffer(2048);
-
-            // Signature
-            buffer = await input.ReadAsync(buffer, 8);
-
-            var format = CheckSignature(buffer);
-            if (format != FileFormats.Supported)
+            IBuffer buffer = new Windows.Storage.Streams.Buffer(128);
+            using (var hash = new HashedInputStream(input))
             {
-                return new ReadHeaderResult
+                // Signature
+                buffer = await hash.ReadAsync(buffer, 8);
+
+                var format = CheckSignature(buffer);
+                if (format != FileFormats.Supported)
                 {
-                    Format = format,
-                };
-            }
-
-            // Schema version
-            buffer = await input.ReadAsync(buffer, 4);
-
-            var version = GetVersion(buffer);
-            format = CheckCompatibility(version);
-            switch (format)
-            {
-                case FileFormats.Supported:
-                case FileFormats.PartialSupported:
-                    break;
-
-                default:
                     return new ReadHeaderResult
                     {
                         Format = format,
                     };
-            }
+                }
 
-            // Fields
-            var headers = await GetHeaders(input, buffer);
-            return new ReadHeaderResult
-            {
-                Format = format,
-                Headers = headers,
-            };
+                // Schema version
+                buffer = await hash.ReadAsync(buffer, 4);
+
+                var version = GetVersion(buffer);
+                format = CheckCompatibility(version);
+                switch (format)
+                {
+                    case FileFormats.Supported:
+                    case FileFormats.PartialSupported:
+                        break;
+
+                    default:
+                        return new ReadHeaderResult
+                        {
+                            Format = format,
+                        };
+                }
+
+                // Fields
+                var headers = await GetHeaders(hash, buffer);
+                headers.Hash = hash.GetHashAndReset();
+
+                return new ReadHeaderResult
+                {
+                    Format = format,
+                    Headers = headers,
+                };
+            }
         }
 
         /// <summary>

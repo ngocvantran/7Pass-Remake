@@ -8,10 +8,10 @@ using NUnit.Framework;
 using SevenPass.IO;
 using SevenPass.IO.Crypto;
 
-namespace SevenPass.Tests
+namespace SevenPass.Tests.Crypto
 {
     [TestFixture]
-    public class HashingStreamExTests
+    public class HashedInputStreamTests
     {
         [Test]
         public async Task Should_produce_read_bytes_hash(
@@ -30,7 +30,7 @@ namespace SevenPass.Tests
 
                 var buffer = new Windows.Storage.Streams.Buffer(bufferSize);
 
-                using (var hashed = new HashingStreamEx(file, false))
+                using (var hashed = new HashedInputStream(file))
                 {
                     for (var i = 0; i < 8; i++)
                     {
@@ -38,34 +38,9 @@ namespace SevenPass.Tests
                             buffer, buffer.Capacity);
                     }
 
-                    hashed.Dispose();
-                    Assert.AreEqual(expected.ToArray(), hashed.Hash.ToArray());
+                    var hash = hashed.GetHashAndReset();
+                    Assert.AreEqual(expected.ToArray(), hash.ToArray());
                 }
-            }
-        }
-
-        [Test]
-        public async Task Should_produce_written_bytes_hash()
-        {
-            var data = CryptographicBuffer.GenerateRandom(2048);
-
-            var expected = HashAlgorithmProvider
-                .OpenAlgorithm(HashAlgorithmNames.Sha256)
-                .HashData(data);
-
-            using (var file = new InMemoryRandomAccessStream())
-            using (var hashed = new HashingStreamEx(file, true))
-            {
-                for (var i = 0; i < 8; i++)
-                {
-                    var part = CryptographicBuffer.CreateFromByteArray(
-                        data.ToArray((uint)(i*256), 256));
-
-                    await hashed.WriteAsync(part);
-                }
-
-                hashed.Dispose();
-                Assert.AreEqual(expected.ToArray(), hashed.Hash.ToArray());
             }
         }
     }

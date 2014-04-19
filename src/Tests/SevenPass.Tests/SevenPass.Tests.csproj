@@ -50,8 +50,9 @@
     <Compile Include="..\..\GlobalInfo.cs">
       <Link>Properties\GlobalInfo.cs</Link>
     </Compile>
+    <Compile Include="Crypto\HashedInputStreamTests.cs" />
+    <Compile Include="Crypto\HashedOutputStreamTests.cs" />
     <Compile Include="FileFormatTests.cs" />
-    <Compile Include="HashingStreamExTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

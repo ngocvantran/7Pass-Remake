@@ -44,7 +44,8 @@
     <Compile Include="..\..\GlobalInfo.cs">
       <Link>Properties\GlobalInfo.cs</Link>
     </Compile>
-    <Compile Include="Crypto\HashingStreamEx.cs" />
+    <Compile Include="Crypto\HashedInputStream.cs" />
+    <Compile Include="Crypto\HashedOutputStream.cs" />
     <Compile Include="FileFormat.cs" />
     <Compile Include="Models\FileFormats.cs" />
     <Compile Include="Models\FileHeaders.cs" />
