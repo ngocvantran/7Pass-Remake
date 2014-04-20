@@ -70,43 +70,45 @@ namespace SevenPass.IO
         public IAsyncOperationWithProgress<IBuffer, uint>
             GetMasterKey(IBuffer seed, ulong rounds)
         {
-            return AsyncInfo.Run<IBuffer, uint>(async (token, progress) =>
-            {
-                var transforms = 0UL;
-                var master = GetMasterKey();
-
-                // AES - ECB
-                var aes = SymmetricKeyAlgorithmProvider
-                    .OpenAlgorithm(SymmetricAlgorithmNames.AesEcb);
-                var key = aes.CreateSymmetricKey(seed);
-
-
-                while (true)
+            return AsyncInfo.Run<IBuffer, uint>(
+                (token, progress) => Task.Run(() =>
                 {
-                    // Report progress
-                    token.ThrowIfCancellationRequested();
-                    progress.Report((uint)Math.Round(
-                        transforms*100F/rounds));
+                    var transforms = 0UL;
+                    var master = GetMasterKey();
 
-                    for (var i = 0; i < 1000; i++)
+                    // AES - ECB
+                    var aes = SymmetricKeyAlgorithmProvider
+                        .OpenAlgorithm(SymmetricAlgorithmNames.AesEcb);
+                    var key = aes.CreateSymmetricKey(seed);
+
+
+                    while (true)
                     {
-                        // Transform master key
-                        master = CryptographicEngine.Encrypt(key, master, null);
+                        // Report progress
+                        token.ThrowIfCancellationRequested();
+                        progress.Report((uint)Math.Round(
+                            transforms*100F/rounds));
 
-                        transforms++;
-                        if (transforms < rounds)
-                            continue;
+                        for (var i = 0; i < 1000; i++)
+                        {
+                            // Transform master key
+                            master = CryptographicEngine
+                                .Encrypt(key, master, null);
 
-                        // Completed
-                        progress.Report(100);
-                        master = HashAlgorithmProvider
-                            .OpenAlgorithm(HashAlgorithmNames.Sha256)
-                            .HashData(master);
+                            transforms++;
+                            if (transforms < rounds)
+                                continue;
 
-                        return master;
+                            // Completed
+                            progress.Report(100);
+                            master = HashAlgorithmProvider
+                                .OpenAlgorithm(HashAlgorithmNames.Sha256)
+                                .HashData(master);
+
+                            return master;
+                        }
                     }
-                }
-            });
+                }, token));
         }
 
         /// <summary>
@@ -162,7 +164,7 @@ namespace SevenPass.IO
             if (input == null)
                 throw new ArgumentNullException("input");
 
-            IBuffer buffer = new Windows.Storage.Streams.Buffer(1024);
+            var buffer = WindowsRuntimeBuffer.Create(1024);
 
             switch (input.Size)
             {

@@ -11,7 +11,7 @@ namespace SevenPass.IO.Models
         /// <summary>
         /// Gets or sets the encryption IV.
         /// </summary>
-        public byte[] EncryptionIV { get; set; }
+        public IBuffer EncryptionIV { get; set; }
 
         /// <summary>
         /// Gets or sets the header hash.
@@ -21,7 +21,7 @@ namespace SevenPass.IO.Models
         /// <summary>
         /// Gets or sets the master seed.
         /// </summary>
-        public byte[] MasterSeed { get; set; }
+        public IBuffer MasterSeed { get; set; }
 
         /// <summary>
         /// Gets or sets the database schema.
@@ -32,7 +32,7 @@ namespace SevenPass.IO.Models
         /// <summary>
         /// Gets or sets the first bytes of the decrypted database content.
         /// </summary>
-        public byte[] StartBytes { get; set; }
+        public IBuffer StartBytes { get; set; }
 
         /// <summary>
         /// Gets or sets the number of password transformation rounds.
@@ -42,7 +42,7 @@ namespace SevenPass.IO.Models
         /// <summary>
         /// Gets or sets the password transformation seed.
         /// </summary>
-        public byte[] TransformSeed { get; set; }
+        public IBuffer TransformSeed { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the database content is compressed using GZip.

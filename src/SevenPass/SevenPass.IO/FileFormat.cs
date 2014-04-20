@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Security.Cryptography;
+using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
 using SevenPass.IO.Crypto;
 using SevenPass.IO.Models;
@@ -10,6 +11,46 @@ namespace SevenPass.IO
 {
     public static class FileFormat
     {
+        /// <summary>
+        /// Decrypts the specified input stream.
+        /// </summary>
+        /// <param name="input">The input stream.</param>
+        /// <param name="masterSeed">The master seed.</param>
+        /// <param name="masterKey">The master key.</param>
+        /// <param name="encryptionIV">The encryption initialization vector.</param>
+        /// <returns>The decrypted buffer.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="input"/>, <paramref name="masterSeed"/>, <paramref name="masterKey"/>
+        /// and <paramref name="encryptionIV"/> cannot be <c>null</c>.
+        /// </exception>
+        public static async Task<IBuffer> Decrypt(
+            IRandomAccessStream input, IBuffer masterSeed, IBuffer masterKey, IBuffer encryptionIV)
+        {
+            if (input == null) throw new ArgumentNullException("input");
+            if (masterSeed == null) throw new ArgumentNullException("masterSeed");
+            if (masterKey == null) throw new ArgumentNullException("masterKey");
+            if (encryptionIV == null) throw new ArgumentNullException("encryptionIV");
+
+            var sha = HashAlgorithmProvider
+                .OpenAlgorithm(HashAlgorithmNames.Sha256)
+                .CreateHash();
+
+            sha.Append(masterSeed);
+            sha.Append(masterKey);
+
+            var seed = sha.GetValueAndReset();
+            var aes = SymmetricKeyAlgorithmProvider
+                .OpenAlgorithm(SymmetricAlgorithmNames.AesCbcPkcs7)
+                .CreateSymmetricKey(seed);
+
+            var result = WindowsRuntimeBuffer.Create(
+                (int)(input.Size - input.Position));
+            result = await input.ReadAsync(result, result.Capacity);
+            result = CryptographicEngine.Decrypt(aes, result, encryptionIV);
+
+            return result;
+        }
+
         /// <summary>
         /// Reads the headers of the specified database file stream.
         /// </summary>
@@ -24,7 +65,7 @@ namespace SevenPass.IO
                 throw new ArgumentNullException("input");
 
             var hash = new HashedInputStream(input);
-            IBuffer buffer = new Windows.Storage.Streams.Buffer(128);
+            var buffer = WindowsRuntimeBuffer.Create(128);
 
             // Signature
             buffer = await hash.ReadAsync(buffer, 8);
@@ -146,19 +187,23 @@ namespace SevenPass.IO
                         break;
 
                     case HeaderFields.EncryptionIV:
-                        result.EncryptionIV = buffer.ToArray();
+                        result.EncryptionIV = buffer
+                            .ToArray().AsBuffer();
                         break;
 
                     case HeaderFields.MasterSeed:
-                        result.MasterSeed = buffer.ToArray();
+                        result.MasterSeed = buffer
+                            .ToArray().AsBuffer();
                         break;
 
                     case HeaderFields.StreamStartBytes:
-                        result.StartBytes = buffer.ToArray();
+                        result.StartBytes = buffer
+                            .ToArray().AsBuffer();
                         break;
 
                     case HeaderFields.TransformSeed:
-                        result.TransformSeed = buffer.ToArray();
+                        result.TransformSeed = buffer
+                            .ToArray().AsBuffer();
                         break;
 
                     case HeaderFields.TransformRounds:

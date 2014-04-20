@@ -6,13 +6,36 @@ using Windows.Storage.Streams;
 using NUnit.Framework;
 using SevenPass.IO;
 using SevenPass.IO.Models;
-using Buffer = Windows.Storage.Streams.Buffer;
 
 namespace SevenPass.Tests.IO
 {
     [TestFixture]
     public class FileFormatTests
     {
+        [Test]
+        public async Task Decrypt_should_decrypt_content()
+        {
+            using (var input = TestFiles.Read("IO.Demo7Pass.kdbx"))
+            {
+                input.Seek(222);
+
+                var masterSeed = CryptographicBuffer.DecodeFromHexString(
+                    "2b4656399a5bdf9fdfe9e8705a34b6f484f9b1b940c3d7cfb7ffece3b634e0ae");
+                var masterKey = CryptographicBuffer.DecodeFromHexString(
+                    "87730050341ff55c46421f2f2a5f4e1e018d0443d19cacc8682f128f1874d0a4");
+                var encryptionIV = CryptographicBuffer.DecodeFromHexString(
+                    "f360c29e1a603a6548cfbb28da6fff50");
+
+                var decrypted = await FileFormat.Decrypt(input,
+                    masterSeed, masterKey, encryptionIV);
+                var buffer = decrypted.ToArray(0, 32).AsBuffer();
+
+                Assert.AreEqual(
+                    "54347fe32f3edbccae1fc60f72c11dafd0a72487b315f9b174ed1073ed67a6e0",
+                    CryptographicBuffer.EncodeToHexString(buffer));
+            }
+        }
+
         [Test]
         public async Task Headers_should_detect_1x_file_format()
         {
@@ -85,7 +108,7 @@ namespace SevenPass.Tests.IO
             using (var database = TestFiles.Read("IO.Demo7Pass.kdbx"))
             using (var file = new InMemoryRandomAccessStream())
             {
-                IBuffer buffer = new Buffer(512);
+                var buffer = WindowsRuntimeBuffer.Create(512);
                 buffer = await database.ReadAsync(
                     buffer, 512, InputStreamOptions.None);
 
@@ -146,20 +169,20 @@ namespace SevenPass.Tests.IO
                 Assert.AreEqual(6000, headers.TransformRounds);
 
                 Assert.AreEqual(
-                    "2B-46-56-39-9A-5B-DF-9F-DF-E9-E8-70-5A-34-B6-F4-84-F9-B1-B9-40-C3-D7-CF-B7-FF-EC-E3-B6-34-E0-AE",
-                    BitConverter.ToString(headers.MasterSeed));
+                    "2b4656399a5bdf9fdfe9e8705a34b6f484f9b1b940c3d7cfb7ffece3b634e0ae",
+                    CryptographicBuffer.EncodeToHexString(headers.MasterSeed));
                 Assert.AreEqual(
-                    "95-25-F6-99-2B-EB-73-9C-BA-A7-3A-E6-E0-50-62-7F-CA-FF-37-8D-3C-D6-F6-C2-32-D2-0A-A9-2F-6D-09-27",
-                    BitConverter.ToString(headers.TransformSeed));
+                    "9525f6992beb739cbaa73ae6e050627fcaff378d3cd6f6c232d20aa92f6d0927",
+                    CryptographicBuffer.EncodeToHexString(headers.TransformSeed));
                 Assert.AreEqual(
-                    "F3-60-C2-9E-1A-60-3A-65-48-CF-BB-28-DA-6F-FF-50",
-                    BitConverter.ToString(headers.EncryptionIV));
+                    "f360c29e1a603a6548cfbb28da6fff50",
+                    CryptographicBuffer.EncodeToHexString(headers.EncryptionIV));
                 Assert.AreEqual(
-                    "54-34-7F-E3-2F-3E-DB-CC-AE-1F-C6-0F-72-C1-1D-AF-D0-A7-24-87-B3-15-F9-B1-74-ED-10-73-ED-67-A6-E0",
-                    BitConverter.ToString(headers.StartBytes));
+                    "54347fe32f3edbccae1fc60f72c11dafd0a72487b315f9b174ed1073ed67a6e0",
+                    CryptographicBuffer.EncodeToHexString(headers.StartBytes));
                 Assert.AreEqual(
-                    "5B-A6-2E-1B-5D-5D-FB-CB-29-5E-F3-BD-2B-62-7E-74-B1-41-D7-DB-3E-19-59-FC-E5-39-34-2B-A3-76-21-21",
-                    BitConverter.ToString(headers.Hash.ToArray()));
+                    "5ba62e1b5d5dfbcb295ef3bd2b627e74b141d7db3e1959fce539342ba3762121",
+                    CryptographicBuffer.EncodeToHexString(headers.Hash));
             }
         }
     }

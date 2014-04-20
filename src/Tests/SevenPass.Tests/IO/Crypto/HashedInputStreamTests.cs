@@ -15,7 +15,7 @@ namespace SevenPass.Tests.IO.Crypto
     {
         [Test]
         public async Task Should_produce_read_bytes_hash(
-            [Values(256U, 300U)] uint bufferSize)
+            [Values(256, 300)] int bufferSize)
         {
             var data = CryptographicBuffer.GenerateRandom(2048);
 
@@ -28,7 +28,7 @@ namespace SevenPass.Tests.IO.Crypto
                 await file.WriteAsync(data);
                 file.Seek(0);
 
-                var buffer = new Windows.Storage.Streams.Buffer(bufferSize);
+                var buffer = WindowsRuntimeBuffer.Create(bufferSize);
 
                 using (var hashed = new HashedInputStream(file))
                 {
