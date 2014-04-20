@@ -8,7 +8,7 @@ using NUnit.Framework;
 using SevenPass.IO;
 using SevenPass.IO.Crypto;
 
-namespace SevenPass.Tests.Crypto
+namespace SevenPass.Tests.IO.Crypto
 {
     [TestFixture]
     public class HashedInputStreamTests

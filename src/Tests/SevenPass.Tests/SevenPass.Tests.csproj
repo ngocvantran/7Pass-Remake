@@ -50,10 +50,10 @@
     <Compile Include="..\..\GlobalInfo.cs">
       <Link>Properties\GlobalInfo.cs</Link>
     </Compile>
-    <Compile Include="Crypto\HashedInputStreamTests.cs" />
-    <Compile Include="Crypto\HashedOutputStreamTests.cs" />
-    <Compile Include="FileFormatTests.cs" />
-    <Compile Include="PasswordDataTests.cs" />
+    <Compile Include="IO\Crypto\HashedInputStreamTests.cs" />
+    <Compile Include="IO\Crypto\HashedOutputStreamTests.cs" />
+    <Compile Include="IO\FileFormatTests.cs" />
+    <Compile Include="IO\PasswordDataTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestFiles.cs" />
   </ItemGroup>
@@ -63,14 +63,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Demo7Pass.kdbx" />
-    <EmbeddedResource Include="Demo7Pass.key" />
-    <EmbeddedResource Include="Demo7Pass.bin" />
-    <EmbeddedResource Include="Demo7Pass.hex" />
+    <EmbeddedResource Include="IO\Demo7Pass.kdbx" />
+    <EmbeddedResource Include="IO\Demo7Pass.key" />
+    <EmbeddedResource Include="IO\Demo7Pass.bin" />
+    <EmbeddedResource Include="IO\Demo7Pass.hex" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Demo7Pass.txt" />
+    <EmbeddedResource Include="IO\Demo7Pass.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

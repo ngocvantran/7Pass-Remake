@@ -10,10 +10,10 @@ namespace SevenPass.Tests
         public static IRandomAccessStream Read(string name)
         {
             var assembly = typeof(TestFiles).GetTypeInfo().Assembly;
-            var keyFile = assembly.GetManifestResourceStream(
+            var stream = assembly.GetManifestResourceStream(
                 "SevenPass.Tests." + name);
 
-            return keyFile.AsRandomAccessStream();
+            return stream.AsRandomAccessStream();
         }
     }
 }

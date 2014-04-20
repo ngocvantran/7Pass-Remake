@@ -8,7 +8,7 @@ using SevenPass.IO;
 using SevenPass.IO.Models;
 using Buffer = Windows.Storage.Streams.Buffer;
 
-namespace SevenPass.Tests
+namespace SevenPass.Tests.IO
 {
     [TestFixture]
     public class FileFormatTests
@@ -82,7 +82,7 @@ namespace SevenPass.Tests
         [Test]
         public async Task Headers_should_detect_partial_support_format()
         {
-            using (var database = TestFiles.Read("Demo7Pass.kdbx"))
+            using (var database = TestFiles.Read("IO.Demo7Pass.kdbx"))
             using (var file = new InMemoryRandomAccessStream())
             {
                 IBuffer buffer = new Buffer(512);
@@ -123,7 +123,7 @@ namespace SevenPass.Tests
         [Test]
         public async Task Headers_should_detect_supported_format()
         {
-            using (var input = TestFiles.Read("Demo7Pass.kdbx"))
+            using (var input = TestFiles.Read("IO.Demo7Pass.kdbx"))
             {
                 var result = await FileFormat.Headers(input);
 
@@ -135,7 +135,7 @@ namespace SevenPass.Tests
         [Test]
         public async Task Headers_should_parse_fields()
         {
-            using (var input = TestFiles.Read("Demo7Pass.kdbx"))
+            using (var input = TestFiles.Read("IO.Demo7Pass.kdbx"))
             {
                 var result = await FileFormat.Headers(input);
 

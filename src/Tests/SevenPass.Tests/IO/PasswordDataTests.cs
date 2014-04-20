@@ -4,7 +4,7 @@ using Windows.Security.Cryptography;
 using NUnit.Framework;
 using SevenPass.IO;
 
-namespace SevenPass.Tests
+namespace SevenPass.Tests.IO
 {
     [TestFixture]
     public class PasswordDataTests
@@ -12,7 +12,7 @@ namespace SevenPass.Tests
         [Test]
         public async Task Should_support_binary_keyfile()
         {
-            using (var input = TestFiles.Read("Demo7Pass.bin"))
+            using (var input = TestFiles.Read("IO.Demo7Pass.bin"))
             {
                 var data = new PasswordData();
                 await data.AddKeyFile(input);
@@ -27,7 +27,7 @@ namespace SevenPass.Tests
         [Test]
         public async Task Should_support_hex_keyfile()
         {
-            using (var input = TestFiles.Read("Demo7Pass.hex"))
+            using (var input = TestFiles.Read("IO.Demo7Pass.hex"))
             {
                 var data = new PasswordData();
                 await data.AddKeyFile(input);
@@ -42,7 +42,7 @@ namespace SevenPass.Tests
         [Test]
         public async Task Should_support_password_and_keyfile()
         {
-            using (var input = TestFiles.Read("Demo7Pass.key"))
+            using (var input = TestFiles.Read("IO.Demo7Pass.key"))
             {
                 var data = new PasswordData
                 {
@@ -74,7 +74,7 @@ namespace SevenPass.Tests
         [Test]
         public async Task Should_support_random_keyfile()
         {
-            using (var input = TestFiles.Read("Demo7Pass.txt"))
+            using (var input = TestFiles.Read("IO.Demo7Pass.txt"))
             {
                 var data = new PasswordData();
                 await data.AddKeyFile(input);
@@ -89,7 +89,7 @@ namespace SevenPass.Tests
         [Test]
         public async Task Should_support_xml_keyfile()
         {
-            using (var input = TestFiles.Read("Demo7Pass.key"))
+            using (var input = TestFiles.Read("IO.Demo7Pass.key"))
             {
                 var data = new PasswordData();
                 await data.AddKeyFile(input);

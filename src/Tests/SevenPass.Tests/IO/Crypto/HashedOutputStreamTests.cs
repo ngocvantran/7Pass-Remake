@@ -7,7 +7,7 @@ using Windows.Storage.Streams;
 using NUnit.Framework;
 using SevenPass.IO.Crypto;
 
-namespace SevenPass.Tests.Crypto
+namespace SevenPass.Tests.IO.Crypto
 {
     [TestFixture]
     public class HashedOutputStreamTests
