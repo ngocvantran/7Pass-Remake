@@ -23,49 +23,48 @@ namespace SevenPass.IO
             if (input == null)
                 throw new ArgumentNullException("input");
 
+            var hash = new HashedInputStream(input);
             IBuffer buffer = new Windows.Storage.Streams.Buffer(128);
-            using (var hash = new HashedInputStream(input))
-            {
-                // Signature
-                buffer = await hash.ReadAsync(buffer, 8);
 
-                var format = CheckSignature(buffer);
-                if (format != FileFormats.Supported)
+            // Signature
+            buffer = await hash.ReadAsync(buffer, 8);
+
+            var format = CheckSignature(buffer);
+            if (format != FileFormats.Supported)
+            {
+                return new ReadHeaderResult
                 {
+                    Format = format,
+                };
+            }
+
+            // Schema version
+            buffer = await hash.ReadAsync(buffer, 4);
+
+            var version = GetVersion(buffer);
+            format = CheckCompatibility(version);
+            switch (format)
+            {
+                case FileFormats.Supported:
+                case FileFormats.PartialSupported:
+                    break;
+
+                default:
                     return new ReadHeaderResult
                     {
                         Format = format,
                     };
-                }
-
-                // Schema version
-                buffer = await hash.ReadAsync(buffer, 4);
-
-                var version = GetVersion(buffer);
-                format = CheckCompatibility(version);
-                switch (format)
-                {
-                    case FileFormats.Supported:
-                    case FileFormats.PartialSupported:
-                        break;
-
-                    default:
-                        return new ReadHeaderResult
-                        {
-                            Format = format,
-                        };
-                }
-
-                // Fields
-                var headers = await GetHeaders(hash, buffer);
-                headers.Hash = hash.GetHashAndReset();
-
-                return new ReadHeaderResult
-                {
-                    Format = format,
-                    Headers = headers,
-                };
             }
+
+            // Fields
+            var headers = await GetHeaders(hash, buffer);
+            headers.Hash = hash.GetHashAndReset();
+
+            return new ReadHeaderResult
+            {
+                Format = format,
+                Headers = headers,
+            };
         }
 
         /// <summary>
