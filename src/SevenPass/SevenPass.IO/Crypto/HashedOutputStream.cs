@@ -5,6 +5,10 @@ using Windows.Storage.Streams;
 
 namespace SevenPass.IO.Crypto
 {
+    /// <summary>
+    /// <see cref="IOutputStream"/> wrapper that provides the SH 256 hash
+    /// of the data written to the stream. 
+    /// </summary>
     public class HashedOutputStream : IOutputStream
     {
         private readonly CryptographicHash _sha;

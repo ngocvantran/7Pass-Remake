@@ -50,6 +50,7 @@
     <Compile Include="..\..\GlobalInfo.cs">
       <Link>Properties\GlobalInfo.cs</Link>
     </Compile>
+    <Compile Include="IO\Crypto\HashedBlockInputStreamTests.cs" />
     <Compile Include="IO\Crypto\HashedInputStreamTests.cs" />
     <Compile Include="IO\Crypto\HashedOutputStreamTests.cs" />
     <Compile Include="IO\FileFormatTests.cs" />
@@ -67,6 +68,8 @@
     <EmbeddedResource Include="IO\Demo7Pass.key" />
     <EmbeddedResource Include="IO\Demo7Pass.bin" />
     <EmbeddedResource Include="IO\Demo7Pass.hex" />
+    <EmbeddedResource Include="IO\HashedBlockStream.bin" />
+    <EmbeddedResource Include="IO\HashedBlockStream.Content.bin" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
