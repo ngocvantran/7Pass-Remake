@@ -23,8 +23,8 @@ namespace SevenPass.IO
         /// The <paramref name="input"/>, <paramref name="masterSeed"/>, <paramref name="masterKey"/>
         /// and <paramref name="encryptionIV"/> cannot be <c>null</c>.
         /// </exception>
-        public static async Task<IBuffer> Decrypt(
-            IRandomAccessStream input, IBuffer masterSeed, IBuffer masterKey, IBuffer encryptionIV)
+        public static async Task<IInputStream> Decrypt(IRandomAccessStream input,
+            IBuffer masterSeed, IBuffer masterKey, IBuffer encryptionIV)
         {
             if (input == null) throw new ArgumentNullException("input");
             if (masterSeed == null) throw new ArgumentNullException("masterSeed");
@@ -43,12 +43,16 @@ namespace SevenPass.IO
                 .OpenAlgorithm(SymmetricAlgorithmNames.AesCbcPkcs7)
                 .CreateSymmetricKey(seed);
 
-            var result = WindowsRuntimeBuffer.Create(
+            var buffer = WindowsRuntimeBuffer.Create(
                 (int)(input.Size - input.Position));
-            result = await input.ReadAsync(result, result.Capacity);
-            result = CryptographicEngine.Decrypt(aes, result, encryptionIV);
+            buffer = await input.ReadAsync(buffer, buffer.Capacity);
+            buffer = CryptographicEngine.Decrypt(aes, buffer, encryptionIV);
 
-            return result;
+            var stream = new InMemoryRandomAccessStream();
+            await stream.WriteAsync(buffer);
+            stream.Seek(0);
+
+            return stream;
         }
 
         /// <summary>

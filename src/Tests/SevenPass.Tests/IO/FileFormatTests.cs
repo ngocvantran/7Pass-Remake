@@ -26,13 +26,17 @@ namespace SevenPass.Tests.IO
                 var encryptionIV = CryptographicBuffer.DecodeFromHexString(
                     "f360c29e1a603a6548cfbb28da6fff50");
 
-                var decrypted = await FileFormat.Decrypt(input,
-                    masterSeed, masterKey, encryptionIV);
-                var buffer = decrypted.ToArray(0, 32).AsBuffer();
+                using (var decrypted = await FileFormat.Decrypt(input,
+                    masterSeed, masterKey, encryptionIV))
+                {
+                    var buffer = WindowsRuntimeBuffer.Create(32);
+                    await decrypted.ReadAsync(buffer, 32);
 
-                Assert.AreEqual(
-                    "54347fe32f3edbccae1fc60f72c11dafd0a72487b315f9b174ed1073ed67a6e0",
-                    CryptographicBuffer.EncodeToHexString(buffer));
+                    Assert.AreEqual(
+                        "54347fe32f3edbccae1fc60f72c11dafd0a72487b315f9b174ed1073ed67a6e0",
+                        CryptographicBuffer.EncodeToHexString(buffer));
+                }
+                
             }
         }
 
