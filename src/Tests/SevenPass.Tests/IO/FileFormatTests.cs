@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Windows.Security.Cryptography;
 using Windows.Storage.Streams;
 using NUnit.Framework;
@@ -202,6 +203,67 @@ namespace SevenPass.Tests.IO
                 Assert.NotNull(root);
                 Assert.AreEqual("KeePassFile", root.Name.LocalName);
             }
+        }
+
+        [Test]
+        public void VerifyHeaders_should_detect_corrupted_hash()
+        {
+            var doc = new XDocument(
+                new XElement("KeePassFile",
+                    new XElement("Meta",
+                        new XElement("HeaderHash", "not a hash"))));
+
+            var hash = CryptographicBuffer.GenerateRandom(32);
+            Assert.False(FileFormat.VerifyHeaders(hash, doc));
+        }
+
+        [Test]
+        public void VerifyHeaders_should_detect_corrupted_headers()
+        {
+            const string value = "W6YuG11d+8spXvO9K2J+dLFB19s+GVn85Tk0K6N2ISE=";
+
+            var doc = new XDocument(
+                new XElement("KeePassFile",
+                    new XElement("Meta",
+                        new XElement("HeaderHash", value))));
+
+            var hash = CryptographicBuffer.GenerateRandom(32);
+            Assert.False(FileFormat.VerifyHeaders(hash, doc));
+        }
+
+        [Test]
+        public void VerifyHeaders_should_detect_empty_document()
+        {
+            var doc = new XDocument();
+            var hash = CryptographicBuffer.GenerateRandom(32);
+            Assert.False(FileFormat.VerifyHeaders(hash, doc));
+        }
+
+        [Test]
+        public void VerifyHeaders_should_detect_missing_hash()
+        {
+            var doc = new XDocument(
+                new XElement("KeePassFile",
+                    new XElement("Meta")));
+
+            var hash = CryptographicBuffer.GenerateRandom(32);
+            Assert.False(FileFormat.VerifyHeaders(hash, doc));
+        }
+
+        [Test]
+        public void VerifyHeaders_should_detect_valid_headers()
+        {
+            const string value = "W6YuG11d+8spXvO9K2J+dLFB19s+GVn85Tk0K6N2ISE=";
+
+            var doc = new XDocument(
+                new XElement("KeePassFile",
+                    new XElement("Meta",
+                        new XElement("HeaderHash", value))));
+
+            var hash = CryptographicBuffer
+                .DecodeFromBase64String(value);
+
+            Assert.True(FileFormat.VerifyHeaders(hash, doc));
         }
 
         [Test]

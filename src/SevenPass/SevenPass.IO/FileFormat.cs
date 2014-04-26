@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -160,6 +161,52 @@ namespace SevenPass.IO
             }
 
             return XDocument.Load(input);
+        }
+
+        /// <summary>
+        /// Verifies the database file headers integrity.
+        /// </summary>
+        /// <param name="headers">The database file headers.</param>
+        /// <param name="doc">The database content.</param>
+        /// <returns><c>true</c> if the header is valid; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="headers"/> and <paramref name="doc"/> cannot be <c>null</c>.
+        /// </exception>
+        public static bool VerifyHeaders(FileHeaders headers, XDocument doc)
+        {
+            return VerifyHeaders(headers.Hash, doc);
+        }
+
+        /// <summary>
+        /// Verifies the database file headers integrity.
+        /// </summary>
+        /// <param name="headerHash">The database file headers hash.</param>
+        /// <param name="doc">The database content.</param>
+        /// <returns><c>true</c> if the header is valid; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="headerHash"/> and <paramref name="doc"/> cannot be <c>null</c>.
+        /// </exception>
+        public static bool VerifyHeaders(IBuffer headerHash, XDocument doc)
+        {
+            string meta;
+            try
+            {
+                meta = doc
+                    .Elements("KeePassFile")
+                    .Elements("Meta")
+                    .Elements("HeaderHash")
+                    .Select(x => x.Value)
+                    .Single();
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
+
+            var expected = CryptographicBuffer
+                .DecodeFromBase64String(meta);
+
+            return CryptographicBuffer.Compare(expected, headerHash);
         }
 
         /// <summary>

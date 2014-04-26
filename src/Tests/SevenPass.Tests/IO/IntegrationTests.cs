@@ -7,10 +7,10 @@ using SevenPass.IO.Models;
 namespace SevenPass.Tests.IO
 {
     [TestFixture]
-    public class DatabaseTests
+    public class IntegrationTests
     {
         [Test]
-        public async Task Should_decrypt_database()
+        public async Task Database_decryption()
         {
             using (var kdbx = TestFiles.Read("IO.Demo7Pass.kdbx"))
             {
@@ -36,16 +36,12 @@ namespace SevenPass.Tests.IO
                     // Start bytes
                     await FileFormat.VerifyStartBytes(
                         decrypted, headers);
-                    
+
                     // Parse content
                     var doc = FileFormat.ParseContent(
                         decrypted, headers.UseGZip);
 
-                    Assert.NotNull(doc);
-
-                    var root = doc.Root;
-                    Assert.NotNull(root);
-                    Assert.AreEqual("KeePassFile", root.Name.LocalName);
+                    FileFormat.VerifyHeaders(headers, doc);
                 }
             }
         }
