@@ -9,6 +9,7 @@ using Windows.Foundation;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
+using SevenPass.IO.Models;
 
 namespace SevenPass.IO
 {
@@ -59,6 +60,21 @@ namespace SevenPass.IO
                 hash.Append(_keyFile);
 
             return hash.GetValueAndReset();
+        }
+
+        /// <summary>
+        /// Gets the transformed master key.
+        /// </summary>
+        /// <param name="headers">The database file headers.</param>
+        /// <returns>The transformation operation.</returns>
+        public IAsyncOperationWithProgress<IBuffer, uint>
+            GetMasterKey(FileHeaders headers)
+        {
+            if (headers == null)
+                throw new ArgumentNullException("headers");
+
+            return GetMasterKey(headers.TransformSeed,
+                headers.TransformRounds);
         }
 
         /// <summary>

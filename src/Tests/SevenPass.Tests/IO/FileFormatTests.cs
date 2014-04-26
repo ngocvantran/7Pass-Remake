@@ -27,16 +27,15 @@ namespace SevenPass.Tests.IO
                     "f360c29e1a603a6548cfbb28da6fff50");
 
                 using (var decrypted = await FileFormat.Decrypt(input,
-                    masterSeed, masterKey, encryptionIV))
+                    masterKey, masterSeed, encryptionIV))
                 {
                     var buffer = WindowsRuntimeBuffer.Create(32);
-                    await decrypted.ReadAsync(buffer, 32);
+                    buffer = await decrypted.ReadAsync(buffer, 32);
 
                     Assert.AreEqual(
                         "54347fe32f3edbccae1fc60f72c11dafd0a72487b315f9b174ed1073ed67a6e0",
                         CryptographicBuffer.EncodeToHexString(buffer));
                 }
-                
             }
         }
 
@@ -187,6 +186,71 @@ namespace SevenPass.Tests.IO
                 Assert.AreEqual(
                     "5ba62e1b5d5dfbcb295ef3bd2b627e74b141d7db3e1959fce539342ba3762121",
                     CryptographicBuffer.EncodeToHexString(headers.Hash));
+            }
+        }
+
+        [Test]
+        public void ParseContent_should_decompress_content()
+        {
+            using (var decrypted = TestFiles.Read("IO.Demo7Pass.Decrypted.bin"))
+            {
+                var doc = FileFormat
+                    .ParseContent(decrypted, true);
+                Assert.NotNull(doc);
+
+                var root = doc.Root;
+                Assert.NotNull(root);
+                Assert.AreEqual("KeePassFile", root.Name.LocalName);
+            }
+        }
+
+        [Test]
+        public async Task VerifyStartBytes_should_return_false_when_not_match()
+        {
+            using (var input = new InMemoryRandomAccessStream())
+            {
+                await input.WriteAsync(CryptographicBuffer
+                    .GenerateRandom(32));
+
+                input.Seek(0);
+                var match = await FileFormat.VerifyStartBytes(input,
+                    CryptographicBuffer.GenerateRandom(32));
+
+                Assert.False(match);
+            }
+        }
+
+        [Test]
+        public async Task VerifyStartBytes_should_return_false_when_reach_end_of_stream()
+        {
+            using (var input = new InMemoryRandomAccessStream())
+            {
+                var bytes = CryptographicBuffer.GenerateRandom(32);
+                await input.WriteAsync(bytes);
+
+                input.Seek(0);
+                input.Size = 16;
+
+                var match = await FileFormat
+                    .VerifyStartBytes(input, bytes);
+
+                Assert.False(match);
+            }
+        }
+
+        [Test]
+        public async Task VerifyStartBytes_should_return_true_when_match()
+        {
+            using (var input = new InMemoryRandomAccessStream())
+            {
+                var bytes = CryptographicBuffer.GenerateRandom(32);
+                await input.WriteAsync(bytes);
+
+                input.Seek(0);
+                var match = await FileFormat
+                    .VerifyStartBytes(input, bytes);
+
+                Assert.True(match);
             }
         }
     }

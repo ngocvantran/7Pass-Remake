@@ -60,43 +60,32 @@ namespace SevenPass.IO.Crypto
         {
             return AsyncInfo.Run<IBuffer, uint>(async (token, progress) =>
             {
-                var index = 0U;
                 var left = count;
-                IBuffer result = null;
 
-                do
+                using (var output = new InMemoryRandomAccessStream())
                 {
-                    if (_buffer.Position == _buffer.Size)
+                    do
                     {
-                        if (!await ReadBlock())
+                        if (_buffer.Position == _buffer.Size)
                         {
-                            if (result != null)
-                            {
-                                // Have partial requested data
-                                return result
-                                    .ToArray(0, (int)index)
-                                    .AsBuffer();
-                            }
-
-                            // No data to return
-                            return WindowsRuntimeBuffer.Create(0);
+                            // no buffered data or all read
+                            if (!await ReadBlock())
+                                break;
                         }
-                    }
 
-                    if (result == null)
-                        result = new byte[count].AsBuffer();
+                        var remaining = _buffer.Size - _buffer.Position;
+                        var toRead = (uint)Math.Min(left, remaining);
 
-                    var remaining = _buffer.Size - _buffer.Position;
-                    var toRead = (uint)Math.Min(left, remaining);
+                        buffer = await _buffer.ReadAsync(buffer, toRead);
+                        await output.WriteAsync(buffer);
+                    } while (output.Size < count);
 
-                    buffer = await _buffer.ReadAsync(buffer, toRead);
-                    buffer.CopyTo(0, result, index, toRead);
-
-                    index += toRead;
-                } while (index < count);
-
-                // Has full requested data
-                return result;
+                    // Has complete data
+                    output.Seek(0);
+                    buffer = await output.ReadAsync(buffer, count);
+                    
+                    return buffer;
+                }
             });
         }
 

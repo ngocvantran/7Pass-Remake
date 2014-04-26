@@ -53,6 +53,7 @@
     <Compile Include="IO\Crypto\HashedBlockInputStreamTests.cs" />
     <Compile Include="IO\Crypto\HashedInputStreamTests.cs" />
     <Compile Include="IO\Crypto\HashedOutputStreamTests.cs" />
+    <Compile Include="IO\DatabaseTests.cs" />
     <Compile Include="IO\FileFormatTests.cs" />
     <Compile Include="IO\PasswordDataTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -70,6 +71,7 @@
     <EmbeddedResource Include="IO\Demo7Pass.hex" />
     <EmbeddedResource Include="IO\HashedBlockStream.bin" />
     <EmbeddedResource Include="IO\HashedBlockStream.Content.bin" />
+    <EmbeddedResource Include="IO\Demo7Pass.Decrypted.bin" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

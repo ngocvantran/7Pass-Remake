@@ -1,6 +1,9 @@
 ﻿using System;
+using System.IO;
+using System.IO.Compression;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
@@ -15,8 +18,29 @@ namespace SevenPass.IO
         /// Decrypts the specified input stream.
         /// </summary>
         /// <param name="input">The input stream.</param>
-        /// <param name="masterSeed">The master seed.</param>
         /// <param name="masterKey">The master key.</param>
+        /// <param name="headers">The database file headers.</param>
+        /// <returns>The decrypted buffer.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="input"/>, <paramref name="masterKey"/>,
+        /// <paramref name="headers"/> cannot be <c>null</c>.
+        /// </exception>
+        public static Task<IInputStream> Decrypt(IRandomAccessStream input,
+            IBuffer masterKey, FileHeaders headers)
+        {
+            if (headers == null)
+                throw new ArgumentNullException("headers");
+
+            return Decrypt(input, masterKey,
+                headers.MasterSeed, headers.EncryptionIV);
+        }
+
+        /// <summary>
+        /// Decrypts the specified input stream.
+        /// </summary>
+        /// <param name="input">The input stream.</param>
+        /// <param name="masterKey">The master key.</param>
+        /// <param name="masterSeed">The master seed.</param>
         /// <param name="encryptionIV">The encryption initialization vector.</param>
         /// <returns>The decrypted buffer.</returns>
         /// <exception cref="ArgumentNullException">
@@ -24,7 +48,7 @@ namespace SevenPass.IO
         /// and <paramref name="encryptionIV"/> cannot be <c>null</c>.
         /// </exception>
         public static async Task<IInputStream> Decrypt(IRandomAccessStream input,
-            IBuffer masterSeed, IBuffer masterKey, IBuffer encryptionIV)
+            IBuffer masterKey, IBuffer masterSeed, IBuffer encryptionIV)
         {
             if (input == null) throw new ArgumentNullException("input");
             if (masterSeed == null) throw new ArgumentNullException("masterSeed");
@@ -110,6 +134,72 @@ namespace SevenPass.IO
                 Format = format,
                 Headers = headers,
             };
+        }
+
+        /// <summary>
+        /// Parses the decrypted content.
+        /// </summary>
+        /// <param name="decrypted">The input stream.</param>
+        /// <param name="useGZip">Set to <c>true</c> to decompress the input stream before parsing.</param>
+        /// <returns>The decrypted content.</returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// The <paramref name="decrypted"/> parameter cannot be <c>null</c>.
+        /// </exception>
+        public static XDocument ParseContent(IInputStream decrypted, bool useGZip)
+        {
+            if (decrypted == null)
+                throw new ArgumentNullException("decrypted");
+
+            var deHashed = new HashedBlockInputStream(decrypted);
+            var input = deHashed.AsStreamForRead();
+
+            if (useGZip)
+            {
+                input = new GZipStream(input,
+                    CompressionMode.Decompress, true);
+            }
+
+            return XDocument.Load(input);
+        }
+
+        /// <summary>
+        /// Verifies the start bytes of the decrypted content stream.
+        /// </summary>
+        /// <param name="input">The decrypted content stream.</param>
+        /// <param name="startBytes">The start bytes stored in database file headers.</param>
+        /// <returns><c>true</c> if the bytes match; otherwise, <c>false</c>.</returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="input"/> and <paramref name="startBytes"/> cannot be <c>null</c>.
+        /// </exception>
+        public static async Task<bool> VerifyStartBytes(IInputStream input, IBuffer startBytes)
+        {
+            if (input == null) throw new ArgumentNullException("input");
+            if (startBytes == null) throw new ArgumentNullException("startBytes");
+
+            var reader = new DataReader(input);
+            var read = await reader.LoadAsync(startBytes.Length);
+            if (read != startBytes.Length)
+                return false;
+
+            var actual = reader.ReadBuffer(startBytes.Length);
+            return CryptographicBuffer.Compare(actual, startBytes);
+        }
+
+        /// <summary>
+        /// Verifies the start bytes of the decrypted content stream.
+        /// </summary>
+        /// <param name="input">The decrypted content stream.</param>
+        /// <param name="headers">The database file headers.</param>
+        /// <returns><c>true</c> if the bytes match; otherwise, <c>false</c>.</returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="input"/> and <paramref name="headers"/> cannot be <c>null</c>.
+        /// </exception>
+        public static Task<bool> VerifyStartBytes(IInputStream input, FileHeaders headers)
+        {
+            if (headers == null)
+                throw new ArgumentNullException("headers");
+
+            return VerifyStartBytes(input, headers.StartBytes);
         }
 
         /// <summary>

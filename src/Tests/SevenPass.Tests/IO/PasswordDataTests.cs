@@ -110,7 +110,7 @@ namespace SevenPass.Tests.IO
             };
 
             var seed = CryptographicBuffer.DecodeFromHexString(
-                "9525F6992BEB739CBAA73AE6E050627FCAFF378D3CD6F6C232D20AA92F6D0927");
+                "9525f6992beb739cbaa73ae6e050627fcaff378d3cd6f6c232d20aa92f6d0927");
 
             var masterKey = await data.GetMasterKey(seed, 6000);
             Assert.AreEqual(
