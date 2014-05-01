@@ -4,15 +4,14 @@ using System.Threading.Tasks;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
-using NUnit.Framework;
 using SevenPass.IO.Crypto;
+using Xunit;
 
 namespace SevenPass.Tests.IO.Crypto
 {
-    [TestFixture]
     public class HashedOutputStreamTests
     {
-        [Test]
+        [Fact]
         public async Task Should_produce_written_bytes_hash()
         {
             var data = CryptographicBuffer.GenerateRandom(2048);
@@ -33,7 +32,7 @@ namespace SevenPass.Tests.IO.Crypto
                 }
 
                 var hash = hashed.GetHashAndReset();
-                Assert.AreEqual(expected.ToArray(), hash.ToArray());
+                Assert.Equal(expected.ToArray(), hash.ToArray());
             }
         }
     }

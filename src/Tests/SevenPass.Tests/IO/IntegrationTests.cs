@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Threading.Tasks;
-using NUnit.Framework;
 using SevenPass.IO;
 using SevenPass.IO.Models;
+using Xunit;
 
 namespace SevenPass.Tests.IO
 {
-    [TestFixture]
     public class IntegrationTests
     {
-        [Test]
+        [Fact]
         public async Task Database_decryption()
         {
             using (var kdbx = TestFiles.Read("IO.Demo7Pass.kdbx"))
             {
                 // Headers
                 var result = await FileFormat.Headers(kdbx);
-                Assert.AreEqual(FileFormats.Supported, result.Format);
+                Assert.Equal(FileFormats.Supported, result.Format);
 
                 var headers = result.Headers;
                 Assert.NotNull(headers);

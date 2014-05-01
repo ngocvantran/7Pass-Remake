@@ -4,18 +4,18 @@ using System.Threading.Tasks;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
-using NUnit.Framework;
 using SevenPass.IO;
 using SevenPass.IO.Crypto;
+using Xunit;
 
 namespace SevenPass.Tests.IO.Crypto
 {
-    [TestFixture]
     public class HashedInputStreamTests
     {
-        [Test]
-        public async Task Should_produce_read_bytes_hash(
-            [Values(256, 300)] int bufferSize)
+        [Theory]
+        [InlineData(256)]
+        [InlineData(300)]
+        public async Task Should_produce_read_bytes_hash(int bufferSize)
         {
             var data = CryptographicBuffer.GenerateRandom(2048);
 
@@ -39,7 +39,7 @@ namespace SevenPass.Tests.IO.Crypto
                     }
 
                     var hash = hashed.GetHashAndReset();
-                    Assert.AreEqual(expected.ToArray(), hash.ToArray());
+                    Assert.Equal(expected.ToArray(), hash.ToArray());
                 }
             }
         }
