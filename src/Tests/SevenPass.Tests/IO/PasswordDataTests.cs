@@ -9,6 +9,20 @@ namespace SevenPass.Tests.IO
     public class PasswordDataTests
     {
         [Fact]
+        public async Task ClearKeyfile_should_clear_registered_keyfile()
+        {
+            using (var keyfile = TestFiles.Read("IO.Demo7Pass.bin"))
+            {
+                var data = new PasswordData();
+                await data.AddKeyFile(keyfile);
+                Assert.True(data.HasKeyFile);
+
+                data.ClearKeyfile();
+                Assert.False(data.HasKeyFile);
+            }
+        }
+
+        [Fact]
         public void ClearKeyfile_should_ignore_if_keyfile_not_added()
         {
             new PasswordData().ClearKeyfile();

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.Storage.Pickers;
 using AutoMapper;
 using Caliburn.Micro;
 using SevenPass.Messages;
-using SevenPass.Services.Cache;
 using SevenPass.Services.Databases;
+using SevenPass.Services.Picker;
 
 namespace SevenPass.ViewModels
 {
@@ -16,21 +15,13 @@ namespace SevenPass.ViewModels
     public class MainViewModel : Screen,
         IHandle<DatabaseRegistrationMessage>
     {
-        private readonly ICacheService _cache;
         private readonly BindableCollection<DatabaseItemViewModel> _databases;
         private readonly IMappingEngine _maps;
         private readonly INavigationService _navigation;
+        private readonly IFilePickerService _picker;
         private readonly IRegisteredDbsService _register;
 
         private DatabaseItemViewModel _selectedDatabase;
-
-        /// <summary>
-        /// Gets the app name.
-        /// </summary>
-        public string AppName
-        {
-            get { return "7Pass Remake"; }
-        }
 
         /// <summary>
         /// Gets the bindable list of registered databases.
@@ -56,21 +47,19 @@ namespace SevenPass.ViewModels
         }
 
         public MainViewModel(INavigationService navigation,
-            ICacheService cache, IRegisteredDbsService register,
-            IMappingEngine maps)
+            IRegisteredDbsService register, IMappingEngine maps,
+            IFilePickerService picker)
         {
             if (navigation == null) throw new ArgumentNullException("navigation");
-            if (cache == null) throw new ArgumentNullException("cache");
             if (register == null) throw new ArgumentNullException("register");
             if (maps == null) throw new ArgumentNullException("maps");
+            if (picker == null) throw new ArgumentNullException("picker");
 
             _maps = maps;
-            _cache = cache;
+            _picker = picker;
             _register = register;
             _navigation = navigation;
             _databases = new BindableCollection<DatabaseItemViewModel>();
-
-            base.DisplayName = "Databases";
         }
 
         public void Handle(DatabaseRegistrationMessage message)
@@ -105,18 +94,8 @@ namespace SevenPass.ViewModels
         /// </summary>
         public async Task Register()
         {
-            var picker = new FileOpenPicker
-            {
-                FileTypeFilter = {".kdbx"},
-                ViewMode = PickerViewMode.List,
-            };
-
-#if WINDOWS_PHONE_APP
-            picker.PickSingleFileAndContinue();
-#else
-            var file = await picker.PickSingleFileAsync();
-            await _register.RegisterAsync(file);
-#endif
+            await _picker.PickAsync(
+                FilePickTargets.Databases);
         }
 
         protected override async void OnInitialize()
@@ -139,13 +118,10 @@ namespace SevenPass.ViewModels
         /// <param name="item">The database item.</param>
         private void Open(DatabaseItemViewModel item)
         {
-            _cache.Cache(new CachedDatabase
-            {
-                Name = item.Name,
-            });
-
             _navigation
-                .UriFor<DatabaseViewModel>()
+                .UriFor<PasswordViewModel>()
+                .WithParam(x => x.Id, item.Id)
+                .WithParam(x => x.DisplayName, item.Name)
                 .Navigate();
         }
     }

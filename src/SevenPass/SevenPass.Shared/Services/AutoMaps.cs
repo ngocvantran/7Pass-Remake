@@ -2,6 +2,7 @@
 using AutoMapper;
 using AutoMapper.Internal;
 using AutoMapper.Mappers;
+using SevenPass.Services.Cache;
 using SevenPass.Services.Databases;
 using SevenPass.ViewModels;
 
@@ -25,6 +26,7 @@ namespace SevenPass.Services
 
             // Maps
             config.CreateMap<DatabaseRegistration, DatabaseItemViewModel>();
+            config.CreateMap<DatabaseItemViewModel, CachedDatabase>();
 
             // Done
             return new MappingEngine(config);

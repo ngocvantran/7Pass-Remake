@@ -7,6 +7,7 @@ using Caliburn.Micro;
 using SevenPass.Services;
 using SevenPass.Services.Cache;
 using SevenPass.Services.Databases;
+using SevenPass.Services.Picker;
 using SevenPass.ViewModels;
 using SevenPass.Views;
 
@@ -36,9 +37,11 @@ namespace SevenPass
 
             _container.PerRequest<MainViewModel>();
             _container.PerRequest<DatabaseViewModel>();
+            _container.PerRequest<PasswordViewModel>();
 
             _container.Instance(AutoMaps.Initialize());
             _container.Singleton<ICacheService, CacheService>();
+            _container.Singleton<IFilePickerService, FilePickerService>();
             _container.Singleton<IRegisteredDbsService, RegisteredDbsService>();
         }
 
@@ -54,9 +57,46 @@ namespace SevenPass
             return TryRegister(_container.GetInstance(service, key));
         }
 
+        protected override void OnActivated(IActivatedEventArgs args)
+        {
+            base.OnActivated(args);
+
+            _container
+                .GetInstance<IFilePickerService>()
+                .ContinueAsync(args);
+        }
+
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
             DisplayRootView<MainView>();
+        }
+
+        protected override void PrepareViewFirst(Frame rootFrame)
+        {
+            _container.Instance(rootFrame);
+            _events = _container.GetInstance<IEventAggregator>();
+            _navigation = _container.RegisterNavigationService(rootFrame);
+
+#if WINDOWS_PHONE_APP
+            EventHandler<Windows.Phone.UI.Input.BackPressedEventArgs> handler = (sender, e) =>
+            {
+                if (!_navigation.CanGoBack)
+                    return;
+
+                e.Handled = true;
+                _navigation.GoBack();
+            };
+
+            rootFrame.Loaded += (sender, args) =>
+            {
+                Windows.Phone.UI.Input.HardwareButtons.BackPressed += handler;
+            };
+
+            rootFrame.Unloaded += (sender, args) =>
+            {
+                Windows.Phone.UI.Input.HardwareButtons.BackPressed -= handler;
+            };
+#endif
         }
 
         private object TryRegister(object instance)
@@ -66,45 +106,6 @@ namespace SevenPass
                 _events.Subscribe(instance);
 
             return instance;
-        }
-
-        protected override void PrepareViewFirst(Frame rootFrame)
-        {
-            _events = _container.GetInstance<IEventAggregator>();
-            _navigation = _container.RegisterNavigationService(rootFrame);
-
-#if WINDOWS_PHONE_APP
-            rootFrame.Loaded += (sender, args) =>
-            {
-                Windows.Phone.UI.Input.HardwareButtons.BackPressed += OnHardwareBackPressed;
-            };
-            rootFrame.Unloaded += (sender, args) =>
-            {
-                Windows.Phone.UI.Input.HardwareButtons.BackPressed -= OnHardwareBackPressed;
-            };
-        }
-
-        protected override void OnActivated(IActivatedEventArgs args)
-        {
-            base.OnActivated(args);
-
-            if (args.Kind != ActivationKind.PickFileContinuation)
-                return;
-
-            var pars = (FileOpenPickerContinuationEventArgs)args;
-            _container
-                .GetInstance<IRegisteredDbsService>()
-                .RegisterAsync(pars.Files[0]);
-        }
-
-        private void OnHardwareBackPressed(object sender, Windows.Phone.UI.Input.BackPressedEventArgs e)
-        {
-            if (!_navigation.CanGoBack)
-                return;
-
-            e.Handled = true;
-            _navigation.GoBack();
-#endif
         }
     }
 }

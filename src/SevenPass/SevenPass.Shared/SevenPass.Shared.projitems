@@ -25,9 +25,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\Databases\DatabaseRegistration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Databases\IRegisteredDbsService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Databases\RegisteredDbsService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Picker\FilePickerService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Picker\FilePickTargets.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Picker\IFilePickerService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DatabaseItemViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DatabaseViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\PasswordViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Resources.resw" />

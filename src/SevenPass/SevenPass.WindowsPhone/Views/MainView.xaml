@@ -7,15 +7,6 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Page.BottomAppBar>
-        <CommandBar>
-            <CommandBar.PrimaryCommands>
-                <AppBarButton x:Uid="RegisterNewDatabase"
-                    Name="Register" Icon="Add" Label="!Add" />
-            </CommandBar.PrimaryCommands>
-        </CommandBar>
-    </Page.BottomAppBar>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -23,10 +14,10 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Margin="24,17,0,28">
-            <TextBlock Name="AppName" Text="7Pass Remake"
+            <TextBlock x:Uid="AppName" Text="!7Pass"
                 Style="{ThemeResource TitleTextBlockStyle}"
                 Typography.Capitals="SmallCaps" />
-            <TextBlock Name="DisplayName" Text="Databases"
+            <TextBlock x:Uid="DatabasesTitle" Text="!Databases"
                 Margin="0,12,0,0" Style="{ThemeResource HeaderTextBlockStyle}" />
         </StackPanel>
 
@@ -39,4 +30,13 @@
             </ListView.Resources>
         </ListView>
     </Grid>
+
+    <Page.BottomAppBar>
+        <CommandBar>
+            <CommandBar.PrimaryCommands>
+                <AppBarButton x:Uid="AddDatabase" Name="Register"
+                    Icon="OpenFile" Label="!add" />
+            </CommandBar.PrimaryCommands>
+        </CommandBar>
+    </Page.BottomAppBar>
 </Page>

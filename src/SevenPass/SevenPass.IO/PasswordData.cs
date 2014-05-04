@@ -18,6 +18,26 @@ namespace SevenPass.IO
         private IBuffer _keyFile;
 
         /// <summary>
+        /// Determines if a keyfile has been registered.
+        /// </summary>
+        public bool HasKeyFile
+        {
+            get { return _keyFile != null; }
+        }
+
+        /// <summary>
+        /// Determines if this instance has valid data.
+        /// </summary>
+        public bool IsValid
+        {
+            get
+            {
+                return _keyFile != null ||
+                    !string.IsNullOrEmpty(Password);
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the password.
         /// </summary>
         /// <value>
@@ -35,6 +55,14 @@ namespace SevenPass.IO
         public async Task AddKeyFile(IRandomAccessStream input)
         {
             _keyFile = await LoadKeyFile(input);
+        }
+
+        /// <summary>
+        /// Clears the keyfile.
+        /// </summary>
+        public void ClearKeyfile()
+        {
+            _keyFile = null;
         }
 
         /// <summary>

@@ -117,7 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="RegisterNewDatabase.Label" xml:space="preserve">
-    <value>Add</value>
+  <data name="AddDatabase.Label" xml:space="preserve">
+    <value>add</value>
+  </data>
+  <data name="AddKeyFile.Label" xml:space="preserve">
+    <value>keyfile</value>
+  </data>
+  <data name="AppName.Text" xml:space="preserve">
+    <value>7Pass</value>
+  </data>
+  <data name="ClearKeyfile.Content" xml:space="preserve">
+    <value>Remove Keyfile</value>
+  </data>
+  <data name="DatabasesTitle.Text" xml:space="preserve">
+    <value>Databases</value>
+  </data>
+  <data name="MasterPassword.Text" xml:space="preserve">
+    <value>Master Password:</value>
+  </data>
+  <data name="OpenDatabase.Label" xml:space="preserve">
+    <value>open</value>
+  </data>
+  <data name="PasswordTitle.Text" xml:space="preserve">
+    <value>Password</value>
   </data>
 </root>
