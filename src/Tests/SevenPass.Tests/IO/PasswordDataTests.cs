@@ -9,6 +9,39 @@ namespace SevenPass.Tests.IO
     public class PasswordDataTests
     {
         [Fact]
+        public void ClearKeyfile_should_ignore_if_keyfile_not_added()
+        {
+            new PasswordData().ClearKeyfile();
+        }
+
+        [Fact]
+        public async Task IsValid_should_require_at_least_password_or_keyfile()
+        {
+            // Not specified
+            var data = new PasswordData();
+            Assert.False(data.IsValid);
+
+            // Password only
+            data.Password = "some password";
+            Assert.True(data.IsValid);
+
+            using (var keyfile = TestFiles.Read("IO.Demo7Pass.bin"))
+            {
+                // Password & keyfile
+                await data.AddKeyFile(keyfile);
+                Assert.True(data.IsValid);
+            }
+
+            // Keyfile only
+            data.Password = null;
+            Assert.True(data.IsValid);
+
+            // Not specified
+            data.ClearKeyfile();
+            Assert.False(data.IsValid);
+        }
+
+        [Fact]
         public async Task Should_support_binary_keyfile()
         {
             using (var input = TestFiles.Read("IO.Demo7Pass.bin"))

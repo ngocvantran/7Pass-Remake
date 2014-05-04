@@ -33,14 +33,14 @@ namespace SevenPass.Tests.IO
                     .Decrypt(kdbx, masterKey, headers))
                 {
                     // Start bytes
-                    await FileFormat.VerifyStartBytes(
-                        decrypted, headers);
+                    Assert.True(await FileFormat
+                        .VerifyStartBytes(decrypted, headers));
 
                     // Parse content
                     var doc = FileFormat.ParseContent(
                         decrypted, headers.UseGZip);
 
-                    FileFormat.VerifyHeaders(headers, doc);
+                    Assert.True(FileFormat.VerifyHeaders(headers, doc));
                 }
             }
         }

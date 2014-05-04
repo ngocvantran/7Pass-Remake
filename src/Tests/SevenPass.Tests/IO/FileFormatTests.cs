@@ -184,8 +184,8 @@ namespace SevenPass.Tests.IO
                     "54347fe32f3edbccae1fc60f72c11dafd0a72487b315f9b174ed1073ed67a6e0",
                     CryptographicBuffer.EncodeToHexString(headers.StartBytes));
                 Assert.Equal(
-                    "5ba62e1b5d5dfbcb295ef3bd2b627e74b141d7db3e1959fce539342ba3762121",
-                    CryptographicBuffer.EncodeToHexString(headers.Hash));
+                    "W6YuG11d+8spXvO9K2J+dLFB19s+GVn85Tk0K6N2ISE=",
+                    CryptographicBuffer.EncodeToBase64String(headers.Hash));
             }
         }
 
