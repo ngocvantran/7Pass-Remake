@@ -15,6 +15,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ExtensionMethods.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseAddedMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseRegistrationActions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\AutoMaps.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Cache\CacheService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Cache\CachedDatabase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Cache\ICacheService.cs" />
@@ -24,5 +28,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DatabaseItemViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DatabaseViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Resources.resw" />
   </ItemGroup>
 </Project>

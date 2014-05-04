@@ -110,6 +110,12 @@
     <Content Include="Assets\WideLogo.scale-240.png" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper">
+      <HintPath>..\..\packages\AutoMapper.3.2.1\lib\wpa81\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper.WPA81">
+      <HintPath>..\..\packages\AutoMapper.3.2.1\lib\wpa81\AutoMapper.WPA81.dll</HintPath>
+    </Reference>
     <Reference Include="Caliburn.Micro">
       <HintPath>..\..\packages\Caliburn.Micro.Core.2.0.0-beta2\lib\portable-net45+win8+wp8+wpa81\Caliburn.Micro.dll</HintPath>
     </Reference>
@@ -124,6 +130,9 @@
     </Reference>
     <Reference Include="Microsoft.Xaml.Interactivity">
       <HintPath>..\..\packages\Caliburn.Micro.2.0.0-beta2\lib\wpa81\Microsoft.Xaml.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.3\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -164,6 +173,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
+  <Import Project="..\..\packages\AutoMapper.3.2.1\tools\AutoMapper.targets" Condition="Exists('..\..\packages\AutoMapper.3.2.1\tools\AutoMapper.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

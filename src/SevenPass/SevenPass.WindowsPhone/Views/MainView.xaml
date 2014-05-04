@@ -7,6 +7,15 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.BottomAppBar>
+        <CommandBar>
+            <CommandBar.PrimaryCommands>
+                <AppBarButton x:Uid="RegisterNewDatabase"
+                    Name="Register" Icon="Add" Label="!Add" />
+            </CommandBar.PrimaryCommands>
+        </CommandBar>
+    </Page.BottomAppBar>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

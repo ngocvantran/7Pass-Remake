@@ -1,17 +1,26 @@
 ﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Windows.Storage.Pickers;
+using AutoMapper;
 using Caliburn.Micro;
+using SevenPass.Messages;
 using SevenPass.Services.Cache;
+using SevenPass.Services.Databases;
 
 namespace SevenPass.ViewModels
 {
     /// <summary>
     /// Main ViewModel when app is launched, display a list of registered database.
     /// </summary>
-    public class MainViewModel : Screen
+    public class MainViewModel : Screen,
+        IHandle<DatabaseRegistrationMessage>
     {
-        private readonly BindableCollection<DatabaseItemViewModel> _databases;
-        private readonly INavigationService _navigation;
         private readonly ICacheService _cache;
+        private readonly BindableCollection<DatabaseItemViewModel> _databases;
+        private readonly IMappingEngine _maps;
+        private readonly INavigationService _navigation;
+        private readonly IRegisteredDbsService _register;
 
         private DatabaseItemViewModel _selectedDatabase;
 
@@ -47,31 +56,81 @@ namespace SevenPass.ViewModels
         }
 
         public MainViewModel(INavigationService navigation,
-            ICacheService cache)
+            ICacheService cache, IRegisteredDbsService register,
+            IMappingEngine maps)
         {
             if (navigation == null) throw new ArgumentNullException("navigation");
             if (cache == null) throw new ArgumentNullException("cache");
+            if (register == null) throw new ArgumentNullException("register");
+            if (maps == null) throw new ArgumentNullException("maps");
 
+            _maps = maps;
             _cache = cache;
+            _register = register;
             _navigation = navigation;
             _databases = new BindableCollection<DatabaseItemViewModel>();
 
             base.DisplayName = "Databases";
         }
 
-        protected override void OnInitialize()
+        public void Handle(DatabaseRegistrationMessage message)
         {
-            _databases.AddRange(new[]
+            var registration = message.Registration;
+
+            switch (message.Action)
             {
-                new DatabaseItemViewModel
-                {
-                    Name = "Demo Database",
-                },
-                new DatabaseItemViewModel
-                {
-                    Name = "My Passwords"
-                },
-            });
+                case DatabaseRegistrationActions.Updated:
+                case DatabaseRegistrationActions.Removed:
+                    var existing = _databases.FirstOrDefault(
+                        x => x.Id == registration.Id);
+
+                    if (existing != null)
+                        _databases.Remove(existing);
+
+                    break;
+            }
+
+            switch (message.Action)
+            {
+                case DatabaseRegistrationActions.Added:
+                case DatabaseRegistrationActions.Updated:
+                    _databases.Add(_maps.Map<DatabaseRegistration,
+                        DatabaseItemViewModel>(registration));
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Registers a new database.
+        /// </summary>
+        public async Task Register()
+        {
+            var picker = new FileOpenPicker
+            {
+                FileTypeFilter = {".kdbx"},
+                ViewMode = PickerViewMode.List,
+            };
+
+#if WINDOWS_PHONE_APP
+            picker.PickSingleFileAndContinue();
+#else
+            var file = await picker.PickSingleFileAsync();
+            await _register.RegisterAsync(file);
+#endif
+        }
+
+        protected override async void OnInitialize()
+        {
+            _databases.Clear();
+
+            var registrations = await _register.ListAsync();
+
+            var items = registrations
+                .Project(_maps)
+                .To<DatabaseItemViewModel>()
+                .OrderBy(x => x.Name);
+
+            _databases.AddRange(items);
         }
 
         /// <summary>

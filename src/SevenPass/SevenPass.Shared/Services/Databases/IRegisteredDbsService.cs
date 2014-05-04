@@ -24,6 +24,12 @@ namespace SevenPass.Services.Databases
         Task<DatabaseRegistration> RegisterAsync(IStorageFile file);
 
         /// <summary>
+        /// Removes the specified database from registration.
+        /// </summary>
+        /// <param name="id">The database ID.</param>
+        Task RemoveAsync(Guid id);
+
+        /// <summary>
         /// Retrieves the database file.
         /// </summary>
         /// <param name="id">The database ID.</param>

@@ -126,6 +126,12 @@
     <Content Include="Assets\StoreLogo.scale-100.png" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper">
+      <HintPath>..\..\packages\AutoMapper.3.2.1\lib\windows8\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper.WinRT">
+      <HintPath>..\..\packages\AutoMapper.3.2.1\lib\windows8\AutoMapper.WinRT.dll</HintPath>
+    </Reference>
     <Reference Include="Caliburn.Micro">
       <HintPath>..\..\packages\Caliburn.Micro.Core.2.0.0-beta2\lib\portable-net45+win8+wp8+wpa81\Caliburn.Micro.dll</HintPath>
     </Reference>
@@ -140,6 +146,9 @@
     </Reference>
     <Reference Include="Microsoft.Xaml.Interactivity">
       <HintPath>..\..\packages\Caliburn.Micro.2.0.0-beta2\lib\win81\Microsoft.Xaml.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.3\lib\netcore45\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +175,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
+  <Import Project="..\..\packages\AutoMapper.3.2.1\tools\AutoMapper.targets" Condition="Exists('..\..\packages\AutoMapper.3.2.1\tools\AutoMapper.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

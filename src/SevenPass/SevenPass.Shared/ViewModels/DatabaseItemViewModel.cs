@@ -8,6 +8,11 @@ namespace SevenPass.ViewModels
     public class DatabaseItemViewModel
     {
         /// <summary>
+        /// Gets or sets the database ID.
+        /// </summary>
+        public Guid Id { get; set; }
+
+        /// <summary>
         /// Gets or sets the database display name.
         /// </summary>
         public string Name { get; set; }
