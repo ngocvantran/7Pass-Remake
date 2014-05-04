@@ -132,7 +132,10 @@
   <data name="DatabasesTitle.Text" xml:space="preserve">
     <value>Databases</value>
   </data>
-  <data name="MasterPassword.Text" xml:space="preserve">
+  <data name="KeyfileName.Text" xml:space="preserve">
+    <value>Used keyfile</value>
+  </data>
+  <data name="MasterPassword.Header" xml:space="preserve">
     <value>Master Password:</value>
   </data>
   <data name="OpenDatabase.Label" xml:space="preserve">

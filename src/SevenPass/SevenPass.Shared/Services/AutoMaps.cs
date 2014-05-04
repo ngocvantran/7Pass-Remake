@@ -26,7 +26,6 @@ namespace SevenPass.Services
 
             // Maps
             config.CreateMap<DatabaseRegistration, DatabaseItemViewModel>();
-            config.CreateMap<DatabaseItemViewModel, CachedDatabase>();
 
             // Done
             return new MappingEngine(config);

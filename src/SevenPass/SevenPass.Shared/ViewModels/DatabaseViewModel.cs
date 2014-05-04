@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 using Caliburn.Micro;
 using SevenPass.Services.Cache;
 
@@ -10,19 +13,123 @@ namespace SevenPass.ViewModels
     public class DatabaseViewModel : Screen
     {
         private readonly CachedDatabase _db;
+        private readonly BindableCollection<ItemViewModelBase> _items;
+        private readonly INavigationService _navigation;
+        private ItemViewModelBase _selectedItem;
 
+        /// <summary>
+        /// Gets the database name.
+        /// </summary>
         public string DatabaseName
         {
             get { return _db.Name; }
         }
 
-        public DatabaseViewModel(ICacheService cache)
+        /// <summary>
+        /// Gets or sets the UUID of the group to be displayed.
+        /// </summary>
+        public string Group { get; set; }
+
+        /// <summary>
+        /// Gets or sets the group items.
+        /// </summary>
+        public BindableCollection<ItemViewModelBase> Items
         {
-            if (cache == null)
-                throw new ArgumentNullException("cache");
+            get { return _items; }
+        }
+
+        /// <summary>
+        /// Gets or sets the selected item.
+        /// </summary>
+        public ItemViewModelBase SelectedItem
+        {
+            get { return _selectedItem; }
+            set
+            {
+                _selectedItem = value;
+                NotifyOfPropertyChange(() => SelectedItem);
+
+                if (value == null)
+                    return;
+
+                Open(value);
+                SelectedItem = null;
+            }
+        }
+
+        public DatabaseViewModel(ICacheService cache,
+            INavigationService navigation)
+        {
+            if (cache == null) throw new ArgumentNullException("cache");
+            if (navigation == null) throw new ArgumentNullException("navigation");
 
             _db = cache.Database;
-            base.DisplayName = "Passwords";
+            _navigation = navigation;
+            _items = new BindableCollection<ItemViewModelBase>();
+        }
+
+        /// <summary>
+        /// Initializes the page.
+        /// </summary>
+        /// <returns></returns>
+        public Task Initialize()
+        {
+            return Task.Run(() =>
+            {
+                var id = Group;
+                var root = _db.Document
+                    .Root.Element("Root");
+                XElement element = null;
+
+                var descendents = root
+                    .Descendants("Group")
+                    .ToList();
+
+                if (!string.IsNullOrEmpty(id))
+                {
+                    element = descendents.FirstOrDefault(x =>
+                        (string)x.Element("UUID") == id);
+
+                    // TODO: handle group not found
+                }
+
+                if (element == null)
+                {
+                    element = descendents
+                        .FirstOrDefault();
+
+                    // TODO: handle case when the document is corrupted
+                }
+
+                var group = new GroupItemViewModel(element);
+                base.DisplayName = group.Name;
+
+                _items.AddRange(@group
+                    .ListGroups()
+                    .Concat(group.ListEntries()
+                        .Cast<ItemViewModelBase>()));
+            });
+        }
+
+        protected override void OnInitialize()
+        {
+            Initialize();
+        }
+
+        /// <summary>
+        /// Opens the specified item.
+        /// </summary>
+        /// <param name="item">The item to open.</param>
+        private void Open(ItemViewModelBase item)
+        {
+            var group = item as GroupItemViewModel;
+            if (group == null)
+                return;
+
+            _navigation
+                .UriFor<DatabaseViewModel>()
+                .WithParam(x => x.Group, group.Id)
+                .Navigate();
         }
     }
 }

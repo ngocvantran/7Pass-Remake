@@ -30,6 +30,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\Picker\IFilePickerService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DatabaseItemViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DatabaseViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\EntryItemViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\GroupItemViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ItemViewModelBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\PasswordViewModel.cs" />
   </ItemGroup>
