@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
@@ -51,19 +53,22 @@ namespace SevenPass.IO.Crypto
         public IAsyncOperationWithProgress<IBuffer, uint> ReadAsync(
             IBuffer buffer, uint count, InputStreamOptions options)
         {
-            var result = _stream.ReadAsync(buffer, count, options);
+            return AsyncInfo.Run<IBuffer, uint>((token, progress) =>
+                ReadPrivateAsync(progress, buffer, count, options));
+        }
 
-            var complete = result.Completed;
-            result.Completed = (info, state) =>
-            {
-                if (state == AsyncStatus.Completed)
-                    _sha.Append(info.GetResults());
+        public async Task<IBuffer> ReadPrivateAsync(IProgress<uint> progress,
+            IBuffer buffer, uint count, InputStreamOptions options)
+        {
+            progress.Report(0);
+            buffer = await _stream.ReadAsync(
+                buffer, count, options);
 
-                if (complete != null)
-                    complete(info, state);
-            };
+            progress.Report(50);
+            _sha.Append(buffer);
 
-            return result;
+            progress.Report(100);
+            return buffer;
         }
     }
 }

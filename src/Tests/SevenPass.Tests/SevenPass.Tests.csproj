@@ -52,7 +52,7 @@
     <Compile Include="..\..\GlobalInfo.cs">
       <Link>Properties\GlobalInfo.cs</Link>
     </Compile>
-    <Compile Include="IO\Crypto\HashedBlockInputStreamTests.cs" />
+    <Compile Include="IO\Crypto\HashedBlockFileFormatTests.cs" />
     <Compile Include="IO\Crypto\HashedInputStreamTests.cs" />
     <Compile Include="IO\Crypto\HashedOutputStreamTests.cs" />
     <Compile Include="IO\IntegrationTests.cs" />

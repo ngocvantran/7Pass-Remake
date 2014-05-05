@@ -37,7 +37,7 @@ namespace SevenPass.Tests.IO
                         .VerifyStartBytes(decrypted, headers));
 
                     // Parse content
-                    var doc = FileFormat.ParseContent(
+                    var doc = await FileFormat.ParseContent(
                         decrypted, headers.UseGZip);
 
                     Assert.True(FileFormat.VerifyHeaders(headers, doc));

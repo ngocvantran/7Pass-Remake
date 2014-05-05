@@ -133,9 +133,11 @@ namespace SevenPass.ViewModels
                     .Decrypt(fs, masterKey, headers.Headers))
                 {
                     // TODO: verify start bytes
+                    await FileFormat.VerifyStartBytes(
+                        decrypted, headers.Headers);
 
                     // Parse content
-                    var doc = FileFormat.ParseContent(
+                    var doc = await FileFormat.ParseContent(
                         decrypted, headers.Headers.UseGZip);
 
                     // TODO: verify headers integrity

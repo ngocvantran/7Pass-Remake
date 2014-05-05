@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.Storage;
 using Caliburn.Micro;
 using Newtonsoft.Json;
@@ -12,7 +13,7 @@ namespace SevenPass.Services.Databases
     public class RegisteredDbsService : IRegisteredDbsService
     {
         private readonly IEventAggregator _events;
-        private readonly StorageFolder _folder;
+        private readonly IAsyncOperation<StorageFolder> _folder;
 
         public RegisteredDbsService(IEventAggregator events)
         {
@@ -20,7 +21,8 @@ namespace SevenPass.Services.Databases
                 throw new ArgumentNullException("events");
 
             _events = events;
-            _folder = ApplicationData.Current.LocalFolder;
+            _folder = ApplicationData.Current.LocalFolder.CreateFolderAsync(
+                "Databases", CreationCollisionOption.OpenIfExists);
         }
 
         /// <summary>
@@ -29,7 +31,8 @@ namespace SevenPass.Services.Databases
         /// <returns>The registered databases.</returns>
         public async Task<ICollection<DatabaseRegistration>> ListAsync()
         {
-            var files = await _folder.GetFilesAsync();
+            var folder = await _folder;
+            var files = await folder.GetFilesAsync();
 
             var registrations = files
                 .Where(x => x.Name.EndsWith(".json",
@@ -64,11 +67,12 @@ namespace SevenPass.Services.Databases
             };
 
             // Save file registration
-            var registration = await _folder
+            var folder = await _folder;
+            var registration = await folder
                 .CreateFileAsync(id + ".json");
             await FileIO.WriteTextAsync(registration,
                 JsonConvert.SerializeObject(info));
-            await file.CopyAsync(_folder, id + ".kdbx");
+            await file.CopyAsync(folder, id + ".kdbx");
 
             // Send notification message
             _events.PublishOnCurrentThread(new DatabaseRegistrationMessage
@@ -86,11 +90,15 @@ namespace SevenPass.Services.Databases
         /// <param name="id">The database ID.</param>
         public async Task RemoveAsync(Guid id)
         {
-            var item = await _folder.GetFileAsync(id + ".json");
+            var folder = await _folder;
+
+            // Registration file
+            var item = await folder.GetFileAsync(id + ".json");
             if (item != null)
                 await item.DeleteAsync();
 
-            item = await _folder.GetFileAsync(id + ".kdbx");
+            // Database file
+            item = await folder.GetFileAsync(id + ".kdbx");
             if (item != null)
                 await item.DeleteAsync();
         }
@@ -102,7 +110,8 @@ namespace SevenPass.Services.Databases
         /// <returns>The database file.</returns>
         public async Task<IStorageFile> RetrieveAsync(Guid id)
         {
-            return await _folder.GetFileAsync(id + "kdbx");
+            var folder = await _folder;
+            return await folder.GetFileAsync(id + ".kdbx");
         }
 
         /// <summary>

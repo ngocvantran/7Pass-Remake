@@ -190,11 +190,11 @@ namespace SevenPass.Tests.IO
         }
 
         [Fact]
-        public void ParseContent_should_decompress_content()
+        public async Task ParseContent_should_decompress_content()
         {
             using (var decrypted = TestFiles.Read("IO.Demo7Pass.Decrypted.bin"))
             {
-                var doc = FileFormat
+                var doc = await FileFormat
                     .ParseContent(decrypted, true);
                 Assert.NotNull(doc);
 

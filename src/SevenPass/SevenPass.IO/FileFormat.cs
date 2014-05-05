@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -146,21 +145,30 @@ namespace SevenPass.IO
         /// <exception cref="System.ArgumentNullException">
         /// The <paramref name="decrypted"/> parameter cannot be <c>null</c>.
         /// </exception>
-        public static XDocument ParseContent(IInputStream decrypted, bool useGZip)
+        public static async Task<XDocument> ParseContent(
+            IInputStream decrypted, bool useGZip)
         {
             if (decrypted == null)
                 throw new ArgumentNullException("decrypted");
 
-            var deHashed = new HashedBlockInputStream(decrypted);
-            var input = deHashed.AsStreamForRead();
+            var deHashed = await HashedBlockFileFormat.Read(decrypted);
+            var input = deHashed;
 
-            if (useGZip)
+            try
             {
-                input = new GZipStream(input,
-                    CompressionMode.Decompress, true);
-            }
+                if (useGZip)
+                {
+                    input = new GZipStream(input,
+                        CompressionMode.Decompress);
+                }
 
-            return XDocument.Load(input);
+                return XDocument.Load(input);
+            }
+            finally
+            {
+                deHashed.Dispose();
+                input.Dispose();
+            }
         }
 
         /// <summary>
