@@ -9,7 +9,8 @@
     <Import_RootNamespace>SevenPass.Tests</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Models\EntryItemModelTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\GroupItemModelTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\EntryItemViewModelTests.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\GroupItemViewModelTests.cs" />
   </ItemGroup>
 </Project>

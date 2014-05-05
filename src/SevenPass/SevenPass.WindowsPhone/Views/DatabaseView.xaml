@@ -14,7 +14,6 @@
                 </NavigationThemeTransition.DefaultNavigationTransitionInfo>
             </NavigationThemeTransition>
         </TransitionCollection>
-
     </Page.Transitions>
 
     <Grid>
@@ -27,13 +26,19 @@
             <TextBlock Name="DatabaseName" Text="7Pass Remake"
                 Style="{ThemeResource TitleTextBlockStyle}"
                 Typography.Capitals="SmallCaps"
-                ContinuumNavigationTransitionInfo.IsEntranceElement="True" />
+                 />
             <TextBlock Name="DisplayName" Text="Databases"
-                Margin="0,12,0,0" Style="{ThemeResource HeaderTextBlockStyle}" />
+                Margin="0,12,0,0" Style="{ThemeResource HeaderTextBlockStyle}"
+                ContinuumNavigationTransitionInfo.IsEntranceElement="True" />
         </StackPanel>
 
-        <Grid Grid.Row="1">
-            <TextBlock>Body here</TextBlock>
-        </Grid>
+        <ListView Name="Items" Grid.Row="1"
+            ContinuumNavigationTransitionInfo.ExitElementContainer="True">
+            <ListView.Resources>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListView.Resources>
+        </ListView>
     </Grid>
 </Page>

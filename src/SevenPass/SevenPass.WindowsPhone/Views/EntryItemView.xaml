@@ -1,0 +1,46 @@
+﻿<UserControl
+    x:Class="SevenPass.Views.EntryItemView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="using:SevenPass.ViewModels"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400" d:DataContext="{d:DesignInstance viewModels:EntryItemViewModel}">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.RowSpan="2" Text="&#xE132;"
+            Style="{StaticResource IconBlock}" />
+
+        <TextBlock Grid.Column="1" Grid.Row="0" Text="~Title"
+            Name="Title" Visibility="{Binding TitleVisibility}"
+            Style="{ThemeResource ListViewItemTextBlockStyle}"
+            ContinuumNavigationTransitionInfo.IsExitElement="True" />
+
+        <Viewbox Grid.Column="1" Grid.Row="0"
+            Visibility="{Binding PasswordVisibility}">
+            <TextBlock Name="Password"
+                Text="~Password" FontFamily="Courier New"
+                Style="{ThemeResource ListViewItemTextBlockStyle}" />
+        </Viewbox>
+
+
+        <TextBlock Grid.Column="1" Grid.Row="1" Name="Username" Text="~Username"
+            Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" />
+
+        <AppBarToggleButton Icon="Admin" Name="TogglePassword"
+            Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" />
+    </Grid>
+</UserControl>

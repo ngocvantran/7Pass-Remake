@@ -92,6 +92,12 @@
     <Compile Include="Views\DatabaseView.xaml.cs">
       <DependentUpon>DatabaseView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\EntryItemView.xaml.cs">
+      <DependentUpon>EntryItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\GroupItemView.xaml.cs">
+      <DependentUpon>GroupItemView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
@@ -153,6 +159,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DatabaseView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EntryItemView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\GroupItemView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

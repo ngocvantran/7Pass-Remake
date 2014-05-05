@@ -1,40 +1,90 @@
 ﻿using System;
-using System.Linq;
-using System.Xml.Linq;
+using Windows.UI.Xaml;
+using Caliburn.Micro;
+using SevenPass.Models;
 
 namespace SevenPass.ViewModels
 {
-    public class EntryItemViewModel : ItemViewModelBase
+    public class EntryItemViewModel : PropertyChangedBase
     {
-        /// <summary>
-        /// Gets or sets the password.
-        /// </summary>
-        public string Password { get; set; }
+        private readonly EntryItemModel _entry;
+
+        private bool _showPassword;
 
         /// <summary>
-        /// Gets or sets the entry title.
+        /// Gets the entry UUID.
         /// </summary>
-        public string Title { get; set; }
-
-        /// <summary>
-        /// Gets or sets the username.
-        /// </summary>
-        public string Username { get; set; }
-
-        public EntryItemViewModel(XElement element)
-            : base(element)
+        public string Id
         {
-            if (element == null)
-                throw new ArgumentNullException("element");
+            get { return _entry.Id; }
+        }
 
-            var strings = element
-                .Elements("String")
-                .ToLookup(x => (string)x.Element("Key"),
-                    x => (string)x.Element("Value"));
+        /// <summary>
+        /// Gets the password.
+        /// </summary>
+        public string Password
+        {
+            get { return _entry.Password; }
+        }
 
-            Title = strings["Title"].FirstOrDefault();
-            Username = strings["UserName"].FirstOrDefault();
-            Password = strings["Password"].FirstOrDefault();
+        /// <summary>
+        /// Gets the visibility of entry password.
+        /// </summary>
+        public Visibility PasswordVisibility
+        {
+            get
+            {
+                return _showPassword
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+        }
+
+        /// <summary>
+        /// Gets the entry title.
+        /// </summary>
+        public string Title
+        {
+            get { return _entry.Title; }
+        }
+
+        /// <summary>
+        /// Gets the visibility of entry title.
+        /// </summary>
+        public Visibility TitleVisibility
+        {
+            get
+            {
+                return !_showPassword
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+        }
+
+        /// <summary>
+        /// Gets the username.
+        /// </summary>
+        public string Username
+        {
+            get { return _entry.Username; }
+        }
+
+        public EntryItemViewModel(EntryItemModel entry)
+        {
+            if (entry == null)
+                throw new ArgumentNullException("entry");
+
+            _entry = entry;
+        }
+
+        /// <summary>
+        /// Toggles the showing of title/password.
+        /// </summary>
+        public void TogglePassword()
+        {
+            _showPassword = !_showPassword;
+            NotifyOfPropertyChange(() => TitleVisibility);
+            NotifyOfPropertyChange(() => PasswordVisibility);
         }
     }
 }

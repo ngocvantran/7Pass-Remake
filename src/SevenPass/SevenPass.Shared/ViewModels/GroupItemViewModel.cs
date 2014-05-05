@@ -1,51 +1,42 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
+using SevenPass.Models;
 
 namespace SevenPass.ViewModels
 {
-    public class GroupItemViewModel : ItemViewModelBase
+    public class GroupItemViewModel
     {
-        private readonly XElement _element;
+        private readonly GroupItemModel _group;
 
         /// <summary>
-        /// Gets or sets the group name.
+        /// Gets the group UUID.
         /// </summary>
-        public string Name { get; set; }
-
-        public GroupItemViewModel(XElement element)
-            : base(element)
+        public string Id
         {
-            if (element == null)
-                throw new ArgumentNullException("element");
-
-            _element = element;
-            Name = (string)element.Element("Name");
+            get { return _group.Id; }
         }
 
         /// <summary>
-        /// Lists the entries of this group.
+        /// Gets the group name.
         /// </summary>
-        /// <returns>The entries.</returns>
-        public List<EntryItemViewModel> ListEntries()
+        public string Name
         {
-            return _element
-                .Elements("Entry")
-                .Select(x => new EntryItemViewModel(x))
-                .ToList();
+            get { return _group.Name; }
         }
 
         /// <summary>
-        /// Lists the child groups of this group.
+        /// Gets the group notes.
         /// </summary>
-        /// <returns>The child groups.</returns>
-        public List<GroupItemViewModel> ListGroups()
+        public string Notes
         {
-            return _element
-                .Elements("Group")
-                .Select(x => new GroupItemViewModel(x))
-                .ToList();
+            get { return _group.Notes; }
+        }
+
+        public GroupItemViewModel(GroupItemModel group)
+        {
+            if (@group == null)
+                throw new ArgumentNullException("group");
+
+            _group = @group;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Xml.Linq;
+using Windows.UI.Xaml;
+using SevenPass.Models;
 using SevenPass.ViewModels;
 using Xunit;
 
@@ -7,162 +8,48 @@ namespace SevenPass.Tests.ViewModels
 {
     public class EntryItemViewModelTests
     {
-        private readonly EntryItemViewModel _entry;
-        private readonly XElement _element;
+        private readonly EntryItemModel _model;
+        private readonly EntryItemViewModel _viewModel;
 
         public EntryItemViewModelTests()
         {
-            _element = XElement.Parse(@"<Entry>
-  <UUID>c2+BwE1hjUWGHo1QnydKGQ==</UUID>
-  <IconID>0</IconID>
-  <ForegroundColor />
-  <BackgroundColor />
-  <OverrideURL />
-  <Tags />
-  <Times>
-    <LastModificationTime>2011-07-02T15:03:52Z</LastModificationTime>
-    <CreationTime>2010-12-06T15:19:56Z</CreationTime>
-    <LastAccessTime>2013-09-30T14:56:49Z</LastAccessTime>
-    <ExpiryTime>2011-05-05T15:19:56Z</ExpiryTime>
-    <Expires>False</Expires>
-    <UsageCount>3</UsageCount>
-    <LocationChanged>2010-12-06T15:19:56Z</LocationChanged>
-  </Times>
-  <String>
-    <Key>Address</Key>
-    <Value Protected='True'>JrlyF2YLe/YUT7E2oH0rRuPx/C8H64HNXnr3H+VElg==</Value>
-  </String>
-  <String>
-    <Key>CCV</Key>
-    <Value Protected='True'>LASl</Value>
-  </String>
-  <String>
-    <Key>Credit Card</Key>
-    <Value Protected='True'>HSaLhBSIYWr54WeKv6616YBeDg==</Value>
-  </String>
-  <String>
-    <Key>Notes</Key>
-    <Value>
-      This entry has a protected fields which is encrypted.
-      7Pass supports protected fields and display them correctly.
-    </Value>
-  </String>
-  <String>
-    <Key>Password</Key>
-    <Value Protected='True'>99vDEC8eGw5FgteIXYQnfQN4UE4=</Value>
-  </String>
-  <String>
-    <Key>Title</Key>
-    <Value>Protected Fields</Value>
-  </String>
-  <String>
-    <Key>URL</Key>
-    <Value />
-  </String>
-  <String>
-    <Key>UserName</Key>
-    <Value>SomeUser</Value>
-  </String>
-  <AutoType>
-    <Enabled>True</Enabled>
-    <DataTransferObfuscation>0</DataTransferObfuscation>
-  </AutoType>
-  <History>
-    <Entry>
-      <UUID>c2+BwE1hjUWGHo1QnydKGQ==</UUID>
-      <IconID>0</IconID>
-      <ForegroundColor />
-      <BackgroundColor />
-      <OverrideURL />
-      <Tags />
-      <Times>
-        <LastModificationTime>2010-12-06T15:22:26Z</LastModificationTime>
-        <CreationTime>2010-12-06T15:19:56Z</CreationTime>
-        <LastAccessTime>2010-12-06T15:22:26Z</LastAccessTime>
-        <ExpiryTime>2011-05-05T15:19:56Z</ExpiryTime>
-        <Expires>True</Expires>
-        <UsageCount>1</UsageCount>
-        <LocationChanged>2010-12-06T15:19:56Z</LocationChanged>
-      </Times>
-      <String>
-        <Key>Address</Key>
-        <Value Protected='True'>KVztXeS4AF9l+AEeYzXdVqCAxBZoZ18CAqInI03X9w==</Value>
-      </String>
-      <String>
-        <Key>CCV</Key>
-        <Value Protected='True'>Dkov</Value>
-      </String>
-      <String>
-        <Key>Credit Card</Key>
-        <Value Protected='True'>zrMRO6bY5iSW+++wAmTbNqZAng==</Value>
-      </String>
-      <String>
-        <Key>Notes</Key>
-        <Value>
-          This entry has a protected fields which is encrypted.
-          7Pass supports protected fields and display them correctly.
-        </Value>
-      </String>
-      <String>
-        <Key>Password</Key>
-        <Value Protected='True'>a3bSiWrlH912A33MjAKTqguXnHA=</Value>
-      </String>
-      <String>
-        <Key>Title</Key>
-        <Value>Protected Fields</Value>
-      </String>
-      <String>
-        <Key>URL</Key>
-        <Value />
-      </String>
-      <String>
-        <Key>UserName</Key>
-        <Value>SomeUser</Value>
-      </String>
-      <AutoType>
-        <Enabled>True</Enabled>
-        <DataTransferObfuscation>0</DataTransferObfuscation>
-      </AutoType>
-    </Entry>
-  </History>
-</Entry>");
-
-            _entry = new EntryItemViewModel(_element);
+            _model = new EntryItemModel();
+            _viewModel = new EntryItemViewModel(_model);
         }
 
         [Fact]
-        public void Should_track_element()
+        public void Should_delegate_entry_details()
         {
-            Assert.Same(_element, _entry.Element);
+            _model.Id = "TEST_UUID";
+            _model.Title = "test entry";
+            _model.Username = "test user";
+            _model.Password = "test password";
+
+            Assert.Equal(_model.Id, _viewModel.Id);
+            Assert.Equal(_model.Title, _viewModel.Title);
+            Assert.Equal(_model.Username, _viewModel.Username);
+            Assert.Equal(_model.Password, _viewModel.Password);
         }
 
         [Fact]
-        public void Should_parse_entry_id()
+        public void Should_hide_password_by_default()
         {
-            Assert.Equal("c2+BwE1hjUWGHo1QnydKGQ==", _entry.Id);
+            Assert.Equal(Visibility.Visible, _viewModel.TitleVisibility);
+            Assert.Equal(Visibility.Collapsed, _viewModel.PasswordVisibility);
         }
 
         [Fact]
-        public void Should_parse_password()
+        public void TogglePassword_should_toggle_password_and_title_visibility()
         {
-            /* 
-             * Password would be decrypted during the decryption process.
-             * The entry should simply parse the content of the string
-             */
+            // Show password
+            _viewModel.TogglePassword();
+            Assert.Equal(Visibility.Collapsed, _viewModel.TitleVisibility);
+            Assert.Equal(Visibility.Visible, _viewModel.PasswordVisibility);
 
-            Assert.Equal("99vDEC8eGw5FgteIXYQnfQN4UE4=", _entry.Password);
-        }
-
-        [Fact]
-        public void Should_parse_title()
-        {
-            Assert.Equal("Protected Fields", _entry.Title);
-        }
-
-        [Fact]
-        public void Should_parse_username()
-        {
-            Assert.Equal("SomeUser", _entry.Username);
+            // Hide password
+            _viewModel.TogglePassword();
+            Assert.Equal(Visibility.Visible, _viewModel.TitleVisibility);
+            Assert.Equal(Visibility.Collapsed, _viewModel.PasswordVisibility);
         }
     }
 }

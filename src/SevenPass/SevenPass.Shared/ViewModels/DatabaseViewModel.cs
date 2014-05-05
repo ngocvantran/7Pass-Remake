@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Caliburn.Micro;
 using SevenPass.Services.Cache;
+using SevenPass.Models;
 
 namespace SevenPass.ViewModels
 {
@@ -13,9 +14,10 @@ namespace SevenPass.ViewModels
     public class DatabaseViewModel : Screen
     {
         private readonly CachedDatabase _db;
-        private readonly BindableCollection<ItemViewModelBase> _items;
+        private readonly BindableCollection<object> _items;
         private readonly INavigationService _navigation;
-        private ItemViewModelBase _selectedItem;
+
+        private object _selectedItem;
 
         /// <summary>
         /// Gets the database name.
@@ -33,7 +35,7 @@ namespace SevenPass.ViewModels
         /// <summary>
         /// Gets or sets the group items.
         /// </summary>
-        public BindableCollection<ItemViewModelBase> Items
+        public BindableCollection<object> Items
         {
             get { return _items; }
         }
@@ -41,7 +43,7 @@ namespace SevenPass.ViewModels
         /// <summary>
         /// Gets or sets the selected item.
         /// </summary>
-        public ItemViewModelBase SelectedItem
+        public object SelectedItem
         {
             get { return _selectedItem; }
             set
@@ -65,7 +67,7 @@ namespace SevenPass.ViewModels
 
             _db = cache.Database;
             _navigation = navigation;
-            _items = new BindableCollection<ItemViewModelBase>();
+            _items = new BindableCollection<object>();
         }
 
         /// <summary>
@@ -101,13 +103,20 @@ namespace SevenPass.ViewModels
                     // TODO: handle case when the document is corrupted
                 }
 
-                var group = new GroupItemViewModel(element);
+                var group = new GroupItemModel(element);
                 base.DisplayName = group.Name;
 
-                _items.AddRange(@group
+                var groups = group
                     .ListGroups()
-                    .Concat(group.ListEntries()
-                        .Cast<ItemViewModelBase>()));
+                    .Select(x => new GroupItemViewModel(x))
+                    .Cast<object>();
+
+                var entries = group
+                    .ListEntries()
+                    .Select(x => new EntryItemViewModel(x))
+                    .Cast<object>();
+
+                _items.AddRange(groups.Concat(entries));
             });
         }
 
@@ -120,7 +129,7 @@ namespace SevenPass.ViewModels
         /// Opens the specified item.
         /// </summary>
         /// <param name="item">The item to open.</param>
-        private void Open(ItemViewModelBase item)
+        private void Open(object item)
         {
             var group = item as GroupItemViewModel;
             if (group == null)

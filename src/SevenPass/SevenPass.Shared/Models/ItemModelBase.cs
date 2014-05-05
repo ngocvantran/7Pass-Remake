@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Xml.Linq;
 
-namespace SevenPass.ViewModels
+namespace SevenPass.Models
 {
-    public class ItemViewModelBase
+    public class ItemModelBase
     {
         private readonly XElement _element;
 
@@ -20,7 +20,7 @@ namespace SevenPass.ViewModels
         /// </summary>
         public string Id { get; set; }
 
-        public ItemViewModelBase(XElement element)
+        public ItemModelBase(XElement element)
         {
             if (element == null)
                 throw new ArgumentNullException("element");
@@ -28,5 +28,7 @@ namespace SevenPass.ViewModels
             _element = element;
             Id = (string)element.Element("UUID");
         }
+
+        public ItemModelBase() {}
     }
 }

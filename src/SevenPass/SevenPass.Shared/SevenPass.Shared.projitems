@@ -18,6 +18,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)ExtensionMethods.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseAddedMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseRegistrationActions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\EntryItemModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\GroupItemModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ItemModelBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\AutoMaps.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Cache\CacheService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Cache\CachedDatabase.cs" />
@@ -32,7 +35,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DatabaseViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\EntryItemViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\GroupItemViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ItemViewModelBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\PasswordViewModel.cs" />
   </ItemGroup>

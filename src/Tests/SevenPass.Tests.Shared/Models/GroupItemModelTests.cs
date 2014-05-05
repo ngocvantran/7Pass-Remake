@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Linq;
 using System.Xml.Linq;
-using SevenPass.ViewModels;
+using SevenPass.Models;
 using Xunit;
 
-namespace SevenPass.Tests.ViewModels
+namespace SevenPass.Tests.Models
 {
-    public class GroupItemViewModelTests
+    public class GroupItemModelTests
     {
         private readonly XElement _element;
-        private readonly GroupItemViewModel _group;
+        private readonly GroupItemModel _group;
 
-        public GroupItemViewModelTests()
+        public GroupItemModelTests()
         {
             _element = XElement.Parse(@"<Group>
     <UUID>GO5heTuMikaOm0x+OtJ0Hg==</UUID>
@@ -190,7 +190,7 @@ Please do not use URLs with your password because the URL may be sent unencrypte
         <LastTopVisibleEntry>AAAAAAAAAAAAAAAAAAAAAA==</LastTopVisibleEntry>
     </Group>
 </Group>");
-            _group = new GroupItemViewModel(_element);
+            _group = new GroupItemModel(_element);
         }
 
         [Fact]
@@ -223,6 +223,12 @@ Please do not use URLs with your password because the URL may be sent unencrypte
         public void Should_parse_group_name()
         {
             Assert.Equal("General", _group.Name);
+        }
+
+        [Fact]
+        public void Should_parse_notes()
+        {
+            Assert.Equal("Notes for General group.", _group.Notes);
         }
 
         [Fact]
