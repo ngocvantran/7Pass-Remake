@@ -25,6 +25,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\Cache\CacheService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Cache\CachedDatabase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Cache\ICacheService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Databases\DatabaseMetaData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Databases\DatabaseRegistration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Databases\IRegisteredDbsService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Databases\RegisteredDbsService.cs" />

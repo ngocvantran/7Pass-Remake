@@ -90,7 +90,7 @@ namespace SevenPass.Services.Picker
             switch (target)
             {
                 case FilePickTargets.Databases:
-                    await _registration.RegisterAsync(file);
+                    _registration.Register(file);
                     break;
 
                 case FilePickTargets.KeyFile:

@@ -2,13 +2,8 @@
 
 namespace SevenPass.Services.Databases
 {
-    public class DatabaseRegistration
+    public class DatabaseMetaData
     {
-        /// <summary>
-        /// Gets or sets the database ID.
-        /// </summary>
-        public string Id { get; set; }
-
         /// <summary>
         /// Gets or sets the database name.
         /// </summary>

@@ -10,7 +10,7 @@ namespace SevenPass.ViewModels
         /// <summary>
         /// Gets or sets the database ID.
         /// </summary>
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// Gets or sets the database display name.

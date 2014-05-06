@@ -14,26 +14,26 @@ namespace SevenPass.Services.Databases
         /// Lists all registered databases.
         /// </summary>
         /// <returns>The registered databases.</returns>
-        Task<ICollection<DatabaseRegistration>> ListAsync();
+        ICollection<DatabaseRegistration> List();
 
         /// <summary>
         /// Registers the specified storage file.
         /// </summary>
         /// <param name="file">The database file.</param>
         /// <returns>The database registration information.</returns>
-        Task<DatabaseRegistration> RegisterAsync(IStorageFile file);
+        DatabaseRegistration Register(IStorageFile file);
 
         /// <summary>
         /// Removes the specified database from registration.
         /// </summary>
         /// <param name="id">The database ID.</param>
-        Task RemoveAsync(Guid id);
+        void Remove(string id);
 
         /// <summary>
         /// Retrieves the database file.
         /// </summary>
         /// <param name="id">The database ID.</param>
         /// <returns>The database file.</returns>
-        Task<IStorageFile> RetrieveAsync(Guid id);
+        Task<IStorageFile> RetrieveAsync(string id);
     }
 }

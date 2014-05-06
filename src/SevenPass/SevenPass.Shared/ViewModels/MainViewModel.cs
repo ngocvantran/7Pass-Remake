@@ -98,13 +98,12 @@ namespace SevenPass.ViewModels
                 FilePickTargets.Databases);
         }
 
-        protected override async void OnInitialize()
+        protected override void OnInitialize()
         {
             _databases.Clear();
 
-            var registrations = await _register.ListAsync();
-
-            var items = registrations
+            var items = _register
+                .List()
                 .Project(_maps)
                 .To<DatabaseItemViewModel>()
                 .OrderBy(x => x.Name);

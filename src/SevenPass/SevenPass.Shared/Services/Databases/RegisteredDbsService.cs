@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.Foundation;
 using Windows.Storage;
+using Windows.Storage.AccessCache;
 using Caliburn.Micro;
 using Newtonsoft.Json;
 using SevenPass.Messages;
@@ -13,7 +13,6 @@ namespace SevenPass.Services.Databases
     public class RegisteredDbsService : IRegisteredDbsService
     {
         private readonly IEventAggregator _events;
-        private readonly IAsyncOperation<StorageFolder> _folder;
 
         public RegisteredDbsService(IEventAggregator events)
         {
@@ -21,35 +20,20 @@ namespace SevenPass.Services.Databases
                 throw new ArgumentNullException("events");
 
             _events = events;
-            _folder = ApplicationData.Current.LocalFolder.CreateFolderAsync(
-                "Databases", CreationCollisionOption.OpenIfExists);
         }
 
         /// <summary>
         /// Lists all registered databases.
         /// </summary>
         /// <returns>The registered databases.</returns>
-        public async Task<ICollection<DatabaseRegistration>> ListAsync()
+        public ICollection<DatabaseRegistration> List()
         {
-            var folder = await _folder;
-            var files = await folder.GetFilesAsync();
-
-            var registrations = files
-                .Where(x => x.Name.EndsWith(".json",
-                    StringComparison.OrdinalIgnoreCase))
-                .Select(Read);
-
-            var result = new List<DatabaseRegistration>();
-            foreach (var registration in registrations)
-            {
-                var info = await registration;
-                if (info == null)
-                    continue;
-
-                result.Add(await registration);
-            }
-
-            return result;
+            return StorageApplicationPermissions
+                .FutureAccessList
+                .Entries
+                .Select(Read)
+                .Where(x => x != null)
+                .ToList();
         }
 
         /// <summary>
@@ -57,22 +41,21 @@ namespace SevenPass.Services.Databases
         /// </summary>
         /// <param name="file">The database file.</param>
         /// <returns>The database registration information.</returns>
-        public async Task<DatabaseRegistration> RegisterAsync(IStorageFile file)
+        public DatabaseRegistration Register(IStorageFile file)
         {
-            var id = Guid.NewGuid();
-            var info = new DatabaseRegistration
+            var meta = new DatabaseMetaData
             {
-                Id = id,
                 Name = GetName(file.Name),
             };
 
-            // Save file registration
-            var folder = await _folder;
-            var registration = await folder
-                .CreateFileAsync(id + ".json");
-            await FileIO.WriteTextAsync(registration,
-                JsonConvert.SerializeObject(info));
-            await file.CopyAsync(folder, id + ".kdbx");
+            var token = StorageApplicationPermissions.FutureAccessList
+                .Add(file, JsonConvert.SerializeObject(meta));
+
+            var info = new DatabaseRegistration
+            {
+                Id = token,
+                Name = meta.Name,
+            };
 
             // Send notification message
             _events.PublishOnCurrentThread(new DatabaseRegistrationMessage
@@ -88,19 +71,10 @@ namespace SevenPass.Services.Databases
         /// Removes the specified database from registration.
         /// </summary>
         /// <param name="id">The database ID.</param>
-        public async Task RemoveAsync(Guid id)
+        public void Remove(string id)
         {
-            var folder = await _folder;
-
-            // Registration file
-            var item = await folder.GetFileAsync(id + ".json");
-            if (item != null)
-                await item.DeleteAsync();
-
-            // Database file
-            item = await folder.GetFileAsync(id + ".kdbx");
-            if (item != null)
-                await item.DeleteAsync();
+            StorageApplicationPermissions
+                .FutureAccessList.Remove(id);
         }
 
         /// <summary>
@@ -108,10 +82,10 @@ namespace SevenPass.Services.Databases
         /// </summary>
         /// <param name="id">The database ID.</param>
         /// <returns>The database file.</returns>
-        public async Task<IStorageFile> RetrieveAsync(Guid id)
+        public async Task<IStorageFile> RetrieveAsync(string id)
         {
-            var folder = await _folder;
-            return await folder.GetFileAsync(id + ".kdbx");
+            return await StorageApplicationPermissions
+                .FutureAccessList.GetFileAsync(id);
         }
 
         /// <summary>
@@ -128,19 +102,22 @@ namespace SevenPass.Services.Databases
         }
 
         /// <summary>
-        /// Reads the specified database registration file.
+        /// Reads the <see cref="DatabaseRegistration"/> from file access entry.
         /// </summary>
-        /// <param name="file">The database registration file.</param>
-        /// <returns>The parsed registration, or <c>null</c> if not valid.</returns>
-        private static async Task<DatabaseRegistration> Read(IStorageFile file)
+        /// <param name="entry">File access entry.</param>
+        /// <returns>The database registration, or <c>null</c> if not valid.</returns>
+        private static DatabaseRegistration Read(AccessListEntry entry)
         {
-            if (file == null)
-                throw new ArgumentNullException("file");
-
             try
             {
-                var json = await FileIO.ReadTextAsync(file);
-                return JsonConvert.DeserializeObject<DatabaseRegistration>(json);
+                var meta = JsonConvert.DeserializeObject
+                    <DatabaseMetaData>(entry.Metadata);
+
+                return new DatabaseRegistration
+                {
+                    Id = entry.Token,
+                    Name = meta.Name,
+                };
             }
             catch
             {
