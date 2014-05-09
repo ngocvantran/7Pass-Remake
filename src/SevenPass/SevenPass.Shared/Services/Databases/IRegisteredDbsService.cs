@@ -21,13 +21,13 @@ namespace SevenPass.Services.Databases
         /// </summary>
         /// <param name="file">The database file.</param>
         /// <returns>The database registration information.</returns>
-        DatabaseRegistration Register(IStorageFile file);
+        Task<DatabaseRegistration> RegisterAsync(IStorageFile file);
 
         /// <summary>
         /// Removes the specified database from registration.
         /// </summary>
         /// <param name="id">The database ID.</param>
-        void Remove(string id);
+        Task RemoveAsync(string id);
 
         /// <summary>
         /// Retrieves the database file.
@@ -35,5 +35,12 @@ namespace SevenPass.Services.Databases
         /// <param name="id">The database ID.</param>
         /// <returns>The database file.</returns>
         Task<IStorageFile> RetrieveAsync(string id);
+
+        /// <summary>
+        /// Retrieves the cached database file.
+        /// </summary>
+        /// <param name="id">The database ID.</param>
+        /// <returns>The cached database file.</returns>
+        Task<IStorageFile> RetrieveCachedAsync(string id);
     }
 }

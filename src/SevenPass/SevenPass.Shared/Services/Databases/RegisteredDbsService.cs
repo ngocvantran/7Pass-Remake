@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Caliburn.Micro;
@@ -12,6 +13,7 @@ namespace SevenPass.Services.Databases
 {
     public class RegisteredDbsService : IRegisteredDbsService
     {
+        private readonly IAsyncOperation<StorageFolder> _cacheFolder;
         private readonly IEventAggregator _events;
 
         public RegisteredDbsService(IEventAggregator events)
@@ -20,6 +22,10 @@ namespace SevenPass.Services.Databases
                 throw new ArgumentNullException("events");
 
             _events = events;
+
+            var localFolder = ApplicationData.Current.LocalFolder;
+            _cacheFolder = localFolder.CreateFolderAsync(
+                "Databases", CreationCollisionOption.OpenIfExists);
         }
 
         /// <summary>
@@ -41,7 +47,7 @@ namespace SevenPass.Services.Databases
         /// </summary>
         /// <param name="file">The database file.</param>
         /// <returns>The database registration information.</returns>
-        public DatabaseRegistration Register(IStorageFile file)
+        public async Task<DatabaseRegistration> RegisterAsync(IStorageFile file)
         {
             var meta = new DatabaseMetaData
             {
@@ -50,6 +56,7 @@ namespace SevenPass.Services.Databases
 
             var token = StorageApplicationPermissions.FutureAccessList
                 .Add(file, JsonConvert.SerializeObject(meta));
+            await file.CopyAsync(await _cacheFolder, token + ".kdbx");
 
             var info = new DatabaseRegistration
             {
@@ -71,8 +78,11 @@ namespace SevenPass.Services.Databases
         /// Removes the specified database from registration.
         /// </summary>
         /// <param name="id">The database ID.</param>
-        public void Remove(string id)
+        public async Task RemoveAsync(string id)
         {
+            var file = await GetCachedFile(id);
+            await file.DeleteAsync();
+
             StorageApplicationPermissions
                 .FutureAccessList.Remove(id);
         }
@@ -86,6 +96,23 @@ namespace SevenPass.Services.Databases
         {
             return await StorageApplicationPermissions
                 .FutureAccessList.GetFileAsync(id);
+        }
+
+        /// <summary>
+        /// Retrieves the cached database file.
+        /// </summary>
+        /// <param name="id">The database ID.</param>
+        /// <returns>The cached database file.</returns>
+        public async Task<IStorageFile> RetrieveCachedAsync(string id)
+        {
+            return await GetCachedFile(id);
+        }
+
+        private async Task<IStorageFile> GetCachedFile(string token)
+        {
+            var folder = await _cacheFolder;
+            return await folder
+                .GetFileAsync(token + ".kdbx");
         }
 
         /// <summary>
