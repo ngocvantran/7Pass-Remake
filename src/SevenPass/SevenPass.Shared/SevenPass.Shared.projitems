@@ -16,6 +16,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)ExtensionMethods.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\CachedFileAccessMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseAddedMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseRegistrationActions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseSupportMessage.cs" />
@@ -32,6 +33,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\Databases\DatabaseRegistration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Databases\IRegisteredDbsService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Databases\RegisteredDbsService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\GlobalMessagesService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Picker\FilePickerService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Picker\FilePickTargets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Picker\IFilePickerService.cs" />

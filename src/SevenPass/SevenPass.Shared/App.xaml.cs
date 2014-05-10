@@ -77,6 +77,10 @@ namespace SevenPass
             _events = _container.GetInstance<IEventAggregator>();
             _navigation = _container.RegisterNavigationService(rootFrame);
 
+            var messages = new GlobalMessagesService();
+            _events.Subscribe(messages);
+            _container.Instance(messages);
+
 #if WINDOWS_PHONE_APP
             EventHandler<Windows.Phone.UI.Input.BackPressedEventArgs> handler = (sender, e) =>
             {

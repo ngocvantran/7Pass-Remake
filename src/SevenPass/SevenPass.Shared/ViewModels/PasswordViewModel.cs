@@ -1,9 +1,11 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Caliburn.Micro;
 using SevenPass.IO;
+using SevenPass.Messages;
 using SevenPass.Services.Cache;
 using SevenPass.Services.Databases;
 using SevenPass.Services.Picker;
@@ -13,6 +15,7 @@ namespace SevenPass.ViewModels
     public class PasswordViewModel : Screen
     {
         private readonly ICacheService _cache;
+        private readonly IEventAggregator _events;
         private readonly INavigationService _navigation;
         private readonly PasswordData _password;
         private readonly IFilePickerService _picker;
@@ -79,15 +82,17 @@ namespace SevenPass.ViewModels
 
         public PasswordViewModel(IFilePickerService picker,
             IRegisteredDbsService registrations, ICacheService cache,
-            INavigationService navigation)
+            INavigationService navigation, IEventAggregator events)
         {
             if (picker == null) throw new ArgumentNullException("picker");
             if (registrations == null) throw new ArgumentNullException("registrations");
             if (cache == null) throw new ArgumentNullException("cache");
             if (navigation == null) throw new ArgumentNullException("navigation");
+            if (events == null) throw new ArgumentNullException("events");
 
             _cache = cache;
             _picker = picker;
+            _events = events;
             _navigation = navigation;
             _registrations = registrations;
             _password = new PasswordData();
@@ -119,8 +124,7 @@ namespace SevenPass.ViewModels
 
         public async Task OpenDatabase()
         {
-            var database = await _registrations
-                .RetrieveAsync(Id);
+            var database = await OpenFileAsync();
 
             using (var fs = await database.OpenReadAsync())
             {
@@ -161,6 +165,26 @@ namespace SevenPass.ViewModels
         {
             await _picker.PickAsync(
                 FilePickTargets.KeyFile);
+        }
+
+        private async Task<IStorageFile> OpenFileAsync()
+        {
+            try
+            {
+                return await _registrations
+                    .RetrieveAsync(Id);
+            }
+            catch (IOException) {}
+
+            var cached = await _registrations
+                .RetrieveCachedAsync(Id);
+            await _events.PublishOnUIThreadAsync(
+                new CachedFileAccessMessage
+                {
+                    Name = cached.Name,
+                });
+
+            return cached;
         }
     }
 }
