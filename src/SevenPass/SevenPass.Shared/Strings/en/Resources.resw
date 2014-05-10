@@ -136,7 +136,7 @@
     <value>Used keyfile</value>
   </data>
   <data name="MasterPassword.Header" xml:space="preserve">
-    <value>Master Password:</value>
+    <value>Master Password</value>
   </data>
   <data name="OpenDatabase.Label" xml:space="preserve">
     <value>open</value>

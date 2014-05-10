@@ -18,9 +18,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)ExtensionMethods.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseAddedMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseRegistrationActions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseSupportMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\DuplicateDatabaseMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\EntryItemModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GroupItemModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ItemModelBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Resources.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\AutoMaps.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Cache\CacheService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Cache\CachedDatabase.cs" />

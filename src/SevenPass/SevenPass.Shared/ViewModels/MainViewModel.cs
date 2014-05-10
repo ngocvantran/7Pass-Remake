@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.UI.Popups;
 using AutoMapper;
 using Caliburn.Micro;
+using SevenPass.IO.Models;
 using SevenPass.Messages;
 using SevenPass.Services.Databases;
 using SevenPass.Services.Picker;
@@ -13,7 +15,9 @@ namespace SevenPass.ViewModels
     /// Main ViewModel when app is launched, display a list of registered database.
     /// </summary>
     public class MainViewModel : Screen,
-        IHandle<DatabaseRegistrationMessage>
+        IHandle<DatabaseRegistrationMessage>,
+        IHandleWithTask<DatabaseSupportMessage>,
+        IHandleWithTask<DuplicateDatabaseMessage>
     {
         private readonly BindableCollection<DatabaseItemViewModel> _databases;
         private readonly IMappingEngine _maps;
@@ -62,6 +66,17 @@ namespace SevenPass.ViewModels
             _databases = new BindableCollection<DatabaseItemViewModel>();
         }
 
+        public async Task Handle(DatabaseSupportMessage message)
+        {
+            var msg = new MessageDialog(
+                GetMessage(message.Format))
+            {
+                Title = "Database File Format",
+            };
+
+            await msg.ShowAsync();
+        }
+
         public void Handle(DatabaseRegistrationMessage message)
         {
             var registration = message.Registration;
@@ -89,6 +104,18 @@ namespace SevenPass.ViewModels
             }
         }
 
+        public async Task Handle(DuplicateDatabaseMessage message)
+        {
+            var msg = new MessageDialog("The selected database file has already been registered. " +
+                "7Pass will automatically use the latest version of the database, " +
+                "you don't have to add the database again.")
+            {
+                Title = "Duplicate Database File",
+            };
+
+            await msg.ShowAsync();
+        }
+
         /// <summary>
         /// Registers a new database.
         /// </summary>
@@ -109,6 +136,40 @@ namespace SevenPass.ViewModels
                 .OrderBy(x => x.Name);
 
             _databases.AddRange(items);
+        }
+
+        private static string GetMessage(FileFormats format)
+        {
+            switch (format)
+            {
+                case FileFormats.KeePass1x:
+                    return "7Pass Remake does not support KeePass 1.x database files. " +
+                        "Please consider converting it to KeePass 2.x format." +
+                        "\r\n\r\nFile not added to 7Pass";
+
+                case FileFormats.NewVersion:
+                    return "The selected database file is created by a newer " +
+                        "version of KeePass that is not supported by 7Pass. " +
+                        "7Pass should be updated soon to support this version." +
+                        "\r\n\r\nFile not added to 7Pass";
+
+                case FileFormats.NotSupported:
+                    return "The selected file is not supported " +
+                        "by 7Pass, or not a KeePass database file." +
+                        "\r\n\r\nFile not added to 7Pass";
+
+                case FileFormats.OldVersion:
+                    return "The selected database file is too old, and is not supported by 7Pass. " +
+                        "Please use KeePass 2 on desktop to migrate it to the current format." +
+                        "\r\n\r\nFile not added to 7Pass";
+
+                case FileFormats.PartialSupported:
+                    return "The database is created/modified by a newer version of KeePass. " +
+                        "Do not make changes to the database with 7Pass to avoid loss of data.";
+
+                default:
+                    return null;
+            }
         }
 
         /// <summary>

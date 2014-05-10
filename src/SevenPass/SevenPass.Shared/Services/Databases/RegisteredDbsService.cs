@@ -7,12 +7,15 @@ using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Caliburn.Micro;
 using Newtonsoft.Json;
+using SevenPass.IO;
+using SevenPass.IO.Models;
 using SevenPass.Messages;
 
 namespace SevenPass.Services.Databases
 {
     public class RegisteredDbsService : IRegisteredDbsService
     {
+        private readonly StorageItemAccessList _accessList;
         private readonly IAsyncOperation<StorageFolder> _cacheFolder;
         private readonly IEventAggregator _events;
 
@@ -22,6 +25,7 @@ namespace SevenPass.Services.Databases
                 throw new ArgumentNullException("events");
 
             _events = events;
+            _accessList = StorageApplicationPermissions.FutureAccessList;
 
             var localFolder = ApplicationData.Current.LocalFolder;
             _cacheFolder = localFolder.CreateFolderAsync(
@@ -49,13 +53,52 @@ namespace SevenPass.Services.Databases
         /// <returns>The database registration information.</returns>
         public async Task<DatabaseRegistration> RegisterAsync(IStorageFile file)
         {
+            using (var input = await file.OpenReadAsync())
+            {
+                var headers = await FileFormat.Headers(input);
+                switch (headers.Format)
+                {
+                    case FileFormats.KeePass1x:
+                    case FileFormats.NewVersion:
+                    case FileFormats.NotSupported:
+                    case FileFormats.OldVersion:
+                        await _events.PublishOnUIThreadAsync(
+                            new DatabaseSupportMessage
+                            {
+                                FileName = file.Name,
+                                Format = headers.Format,
+                            });
+                        return null;
+
+                    case FileFormats.PartialSupported:
+                        await _events.PublishOnUIThreadAsync(
+                            new DatabaseSupportMessage
+                            {
+                                FileName = file.Name,
+                                Format = headers.Format,
+                            });
+                        break;
+                }
+            }
+
             var meta = new DatabaseMetaData
             {
                 Name = GetName(file.Name),
             };
 
-            var token = StorageApplicationPermissions.FutureAccessList
-                .Add(file, JsonConvert.SerializeObject(meta));
+            // Check already registered database file
+            var exists = _accessList.CheckAccess(file);
+            if (exists)
+            {
+                await _events.PublishOnUIThreadAsync(
+                    new DuplicateDatabaseMessage());
+
+                return null;
+            }
+
+            // Register for future access
+            var token = _accessList.Add(file,
+                JsonConvert.SerializeObject(meta));
             await file.CopyAsync(await _cacheFolder, token + ".kdbx");
 
             var info = new DatabaseRegistration
@@ -65,11 +108,12 @@ namespace SevenPass.Services.Databases
             };
 
             // Send notification message
-            _events.PublishOnCurrentThread(new DatabaseRegistrationMessage
-            {
-                Registration = info,
-                Action = DatabaseRegistrationActions.Added,
-            });
+            await _events.PublishOnUIThreadAsync(
+                new DatabaseRegistrationMessage
+                {
+                    Registration = info,
+                    Action = DatabaseRegistrationActions.Added,
+                });
 
             return info;
         }
@@ -82,9 +126,7 @@ namespace SevenPass.Services.Databases
         {
             var file = await GetCachedFile(id);
             await file.DeleteAsync();
-
-            StorageApplicationPermissions
-                .FutureAccessList.Remove(id);
+            _accessList.Remove(id);
         }
 
         /// <summary>
@@ -94,8 +136,7 @@ namespace SevenPass.Services.Databases
         /// <returns>The database file.</returns>
         public async Task<IStorageFile> RetrieveAsync(string id)
         {
-            return await StorageApplicationPermissions
-                .FutureAccessList.GetFileAsync(id);
+            return await _accessList.GetFileAsync(id);
         }
 
         /// <summary>

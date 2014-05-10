@@ -63,17 +63,7 @@ namespace SevenPass.Services.Picker
             {
                 ViewMode = PickerViewMode.List,
             };
-
-            switch (target)
-            {
-                case FilePickTargets.Databases:
-                    picker.FileTypeFilter.Add(".kdbx");
-                    break;
-
-                case FilePickTargets.KeyFile:
-                    picker.FileTypeFilter.Add("*");
-                    break;
-            }
+            picker.FileTypeFilter.Add("*");
 
 #if WINDOWS_PHONE_APP
             picker.ContinuationData.Add(

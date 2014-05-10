@@ -2,7 +2,6 @@
 using AutoMapper;
 using AutoMapper.Internal;
 using AutoMapper.Mappers;
-using SevenPass.Services.Cache;
 using SevenPass.Services.Databases;
 using SevenPass.ViewModels;
 
