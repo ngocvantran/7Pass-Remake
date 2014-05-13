@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using Caliburn.Micro;
-using SevenPass.Services.Cache;
 using SevenPass.Models;
+using SevenPass.Services.Cache;
 
 namespace SevenPass.ViewModels
 {
@@ -13,19 +12,16 @@ namespace SevenPass.ViewModels
     /// </summary>
     public class DatabaseViewModel : Screen
     {
-        private readonly CachedDatabase _db;
+        private readonly ICacheService _cache;
         private readonly BindableCollection<object> _items;
         private readonly INavigationService _navigation;
 
         private object _selectedItem;
 
         /// <summary>
-        /// Gets the database name.
+        /// Gets or sets the database name.
         /// </summary>
-        public string DatabaseName
-        {
-            get { return _db.Name; }
-        }
+        public string DatabaseName { get; private set; }
 
         /// <summary>
         /// Gets or sets the UUID of the group to be displayed.
@@ -65,8 +61,9 @@ namespace SevenPass.ViewModels
             if (cache == null) throw new ArgumentNullException("cache");
             if (navigation == null) throw new ArgumentNullException("navigation");
 
-            _db = cache.Database;
+            _cache = cache;
             _navigation = navigation;
+            DatabaseName = _cache.Database.Name;
             _items = new BindableCollection<object>();
         }
 
@@ -78,30 +75,8 @@ namespace SevenPass.ViewModels
         {
             return Task.Run(() =>
             {
-                var id = Group;
-                var root = _db.Document
-                    .Root.Element("Root");
-                XElement element = null;
-
-                var descendents = root
-                    .Descendants("Group")
-                    .ToList();
-
-                if (!string.IsNullOrEmpty(id))
-                {
-                    element = descendents.FirstOrDefault(x =>
-                        (string)x.Element("UUID") == id);
-
-                    // TODO: handle group not found
-                }
-
-                if (element == null)
-                {
-                    element = descendents
-                        .FirstOrDefault();
-
-                    // TODO: handle case when the document is corrupted
-                }
+                var element = _cache.GetGroup(Group);
+                // TODO: handle group not found
 
                 var group = new GroupItemModel(element);
                 base.DisplayName = group.Name;

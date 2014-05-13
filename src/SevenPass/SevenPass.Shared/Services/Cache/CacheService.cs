@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace SevenPass.Services.Cache
 {
     public class CacheService : ICacheService
     {
+        private ILookup<string, XElement> _entries;
+        private ILookup<string, XElement> _groups;
+
         /// <summary>
         /// Gets the cached database.
         /// </summary>
@@ -22,6 +27,50 @@ namespace SevenPass.Services.Cache
                 throw new ArgumentNullException("database");
 
             Database = database;
+
+            var groups = database.Document
+                .Descendants("Group")
+                .ToList();
+
+            _groups = groups.ToLookup(x =>
+                (string)x.Element("UUID"));
+            _entries = groups
+                .SelectMany(x => x.Elements("Entry"))
+                .ToLookup(x => (string)x.Element("UUID"));
+        }
+
+        /// <summary>
+        /// Clears the cache.
+        /// </summary>
+        public void Clear()
+        {
+            _groups = null;
+            _entries = null;
+            Database = null;
+        }
+
+        /// <summary>
+        /// Gets the Entry element with the specified UUID.
+        /// </summary>
+        /// <param name="uuid">The entry's UUID.</param>
+        /// <returns>The specified entry, or <c>null</c> if not found.</returns>
+        public XElement GetEntry(string uuid)
+        {
+            return _entries != null
+                ? _entries[uuid].FirstOrDefault()
+                : null;
+        }
+
+        /// <summary>
+        /// Gets the Group element with the specified UUID.
+        /// </summary>
+        /// <param name="uuid">The group's UUID.</param>
+        /// <returns>The specified group, or <c>null</c> if not found.</returns>
+        public XElement GetGroup(string uuid)
+        {
+            return _groups != null
+                ? _groups[uuid].FirstOrDefault()
+                : null;
         }
     }
 }
