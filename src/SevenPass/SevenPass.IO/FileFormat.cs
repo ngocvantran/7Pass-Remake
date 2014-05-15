@@ -2,6 +2,7 @@
 using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Security.Cryptography;
@@ -142,14 +143,15 @@ namespace SevenPass.IO
         /// <param name="decrypted">The input stream.</param>
         /// <param name="useGZip">Set to <c>true</c> to decompress the input stream before parsing.</param>
         /// <returns>The decrypted content.</returns>
+        /// <param name="headers">The database file headers.</param>
         /// <exception cref="System.ArgumentNullException">
-        /// The <paramref name="decrypted"/> parameter cannot be <c>null</c>.
+        /// The <paramref name="decrypted"/> or <paramref name="headers"/> parameter cannot be <c>null</c>.
         /// </exception>
         public static async Task<XDocument> ParseContent(
-            IInputStream decrypted, bool useGZip)
+            IInputStream decrypted, bool useGZip, FileHeaders headers)
         {
-            if (decrypted == null)
-                throw new ArgumentNullException("decrypted");
+            if (decrypted == null) throw new ArgumentNullException("decrypted");
+            if (headers == null) throw new ArgumentNullException("headers");
 
             var deHashed = await HashedBlockFileFormat.Read(decrypted);
             var input = deHashed;
@@ -162,7 +164,10 @@ namespace SevenPass.IO
                         CompressionMode.Decompress);
                 }
 
-                return XDocument.Load(input);
+                var doc = XDocument.Load(input);
+                Decrypt(headers, doc);
+
+                return doc;
             }
             finally
             {
@@ -306,6 +311,47 @@ namespace SevenPass.IO
             return FileFormats.Supported;
         }
 
+        private static void Decrypt(FileHeaders headers, XDocument doc)
+        {
+            var protectedStrings = doc.Descendants("Entry")
+                .SelectMany(x => x.Elements("String"))
+                .Select(x => x.Element("Value"))
+                .Where(x =>
+                {
+                    var protect = x.Attribute("Protected");
+                    return protect != null && (bool)protect;
+                });
+
+            IRandomGenerator generator;
+            switch (headers.RandomAlgorithm)
+            {
+                case CrsAlgorithm.ArcFourVariant:
+                    generator = new Rc4RandomGenerator(
+                        headers.ProtectedStreamKey);
+                    break;
+
+                default:
+                    generator = new Salsa20RandomGenerator(
+                        headers.ProtectedStreamKey);
+                    break;
+            }
+
+            foreach (var protectedString in protectedStrings)
+            {
+                var encrypted = Convert.FromBase64String(
+                    protectedString.Value);
+                var length = encrypted.Length;
+
+                var padding = generator.GetRandomBytes(length);
+
+                for (var i = 0U; i < length; i++)
+                    encrypted[i] ^= padding.GetByte(i);
+
+                protectedString.Value = Encoding.UTF8
+                    .GetString(encrypted, 0, length);
+            }
+        }
+
         /// <summary>
         /// Parse the headers fields.
         /// </summary>
@@ -363,6 +409,11 @@ namespace SevenPass.IO
                     case HeaderFields.ProtectedStreamKey:
                         result.ProtectedStreamKey = buffer
                             .ToArray().AsBuffer();
+                        break;
+
+                    case HeaderFields.InnerRandomStreamID:
+                        result.RandomAlgorithm = (CrsAlgorithm)
+                            BitConverter.ToUInt32(buffer.ToArray(), 0);
                         break;
                 }
             }

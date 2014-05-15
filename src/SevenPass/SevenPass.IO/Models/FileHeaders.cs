@@ -1,5 +1,6 @@
 ﻿using System;
 using Windows.Storage.Streams;
+using SevenPass.IO.Crypto;
 
 namespace SevenPass.IO.Models
 {
@@ -27,6 +28,11 @@ namespace SevenPass.IO.Models
         /// Gets or sets the protected stream key.
         /// </summary>
         public IBuffer ProtectedStreamKey { get; set; }
+
+        /// <summary>
+        /// Gets or sets the algorithm for the random bytes generator.
+        /// </summary>
+        public CrsAlgorithm RandomAlgorithm { get; set; }
 
         /// <summary>
         /// Gets or sets the database schema.

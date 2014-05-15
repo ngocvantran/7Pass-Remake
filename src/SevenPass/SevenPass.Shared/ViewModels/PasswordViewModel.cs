@@ -129,20 +129,22 @@ namespace SevenPass.ViewModels
             using (var fs = await database.OpenReadAsync())
             {
                 // TODO: handle errors & display transformation progress
-                var headers = await FileFormat.Headers(fs);
+                var result = await FileFormat.Headers(fs);
+                var headers = result.Headers;
+
                 var masterKey = await _password
-                    .GetMasterKey(headers.Headers);
+                    .GetMasterKey(headers);
 
                 using (var decrypted = await FileFormat
-                    .Decrypt(fs, masterKey, headers.Headers))
+                    .Decrypt(fs, masterKey, headers))
                 {
                     // TODO: verify start bytes
                     await FileFormat.VerifyStartBytes(
-                        decrypted, headers.Headers);
+                        decrypted, headers);
 
                     // Parse content
                     var doc = await FileFormat.ParseContent(
-                        decrypted, headers.Headers.UseGZip);
+                        decrypted, headers.UseGZip, headers);
 
                     // TODO: verify headers integrity
 
@@ -151,7 +153,7 @@ namespace SevenPass.ViewModels
                         Id = Id,
                         Document = doc,
                         Name = DisplayName,
-                        Headers = headers.Headers,
+                        Headers = headers,
                     });
 
                     _navigation

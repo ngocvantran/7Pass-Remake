@@ -10,6 +10,6 @@ namespace SevenPass.IO.Crypto
         /// </summary>
         /// <param name="size">Size of the bytes buffer.</param>
         /// <returns>Random bytes buffer.</returns>
-        IBuffer GetRandomBytes(uint size);
+        IBuffer GetRandomBytes(int size);
     }
 }

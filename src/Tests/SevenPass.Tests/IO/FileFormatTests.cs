@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using Windows.Security.Cryptography;
 using Windows.Storage.Streams;
 using SevenPass.IO;
+using SevenPass.IO.Crypto;
 using SevenPass.IO.Models;
 using Xunit;
 
@@ -171,6 +172,7 @@ namespace SevenPass.Tests.IO
 
                 Assert.True(headers.UseGZip);
                 Assert.Equal(6000U, headers.TransformRounds);
+                Assert.Equal(CrsAlgorithm.Salsa20, headers.RandomAlgorithm);
 
                 Assert.Equal(
                     "2b4656399a5bdf9fdfe9e8705a34b6f484f9b1b940c3d7cfb7ffece3b634e0ae",
@@ -198,8 +200,15 @@ namespace SevenPass.Tests.IO
         {
             using (var decrypted = TestFiles.Read("IO.Demo7Pass.Decrypted.bin"))
             {
-                var doc = await FileFormat
-                    .ParseContent(decrypted, true);
+                var headers = new FileHeaders
+                {
+                    RandomAlgorithm = CrsAlgorithm.Salsa20,
+                    ProtectedStreamKey = CryptographicBuffer.DecodeFromBase64String(
+                        "FDNbUwE9jt6Y9+syU+btBIOGRxYt2tiUqnb6FXWIF1E="),
+                };
+
+                var doc = await FileFormat.ParseContent(
+                    decrypted, true, headers);
                 Assert.NotNull(doc);
 
                 var root = doc.Root;
@@ -213,8 +222,15 @@ namespace SevenPass.Tests.IO
         {
             using (var decrypted = TestFiles.Read("IO.Demo7Pass.Decrypted.bin"))
             {
-                var doc = await FileFormat
-                    .ParseContent(decrypted, true);
+                var headers = new FileHeaders
+                {
+                    RandomAlgorithm = CrsAlgorithm.Salsa20,
+                    ProtectedStreamKey = CryptographicBuffer.DecodeFromBase64String(
+                        "FDNbUwE9jt6Y9+syU+btBIOGRxYt2tiUqnb6FXWIF1E="),
+                };
+
+                var doc = await FileFormat.ParseContent(
+                    decrypted, true, headers);
                 Assert.NotNull(doc);
 
                 var entry = doc.Descendants("Entry")
