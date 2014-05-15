@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -186,6 +187,9 @@ namespace SevenPass.Tests.IO
                 Assert.Equal(
                     "W6YuG11d+8spXvO9K2J+dLFB19s+GVn85Tk0K6N2ISE=",
                     CryptographicBuffer.EncodeToBase64String(headers.Hash));
+                Assert.Equal(
+                    "FDNbUwE9jt6Y9+syU+btBIOGRxYt2tiUqnb6FXWIF1E=",
+                    CryptographicBuffer.EncodeToBase64String(headers.ProtectedStreamKey));
             }
         }
 
@@ -201,6 +205,26 @@ namespace SevenPass.Tests.IO
                 var root = doc.Root;
                 Assert.NotNull(root);
                 Assert.Equal("KeePassFile", root.Name.LocalName);
+            }
+        }
+
+        [Fact]
+        public async Task ParseContent_should_decrypt_passwords()
+        {
+            using (var decrypted = TestFiles.Read("IO.Demo7Pass.Decrypted.bin"))
+            {
+                var doc = await FileFormat
+                    .ParseContent(decrypted, true);
+                Assert.NotNull(doc);
+
+                var entry = doc.Descendants("Entry")
+                    .Where(x => (string)x.Element("UUID") == "H/DqrrE1mEKScz8VpPrafg==")
+                    .SelectMany(x => x.Elements("String"))
+                    .Where(x => (string)x.Element("Key") == "Password")
+                    .Select(x => (string)x.Element("Value"))
+                    .Single();
+
+                Assert.Equal("Password", entry);
             }
         }
 

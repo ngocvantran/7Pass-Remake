@@ -24,6 +24,11 @@ namespace SevenPass.IO.Models
         public IBuffer MasterSeed { get; set; }
 
         /// <summary>
+        /// Gets or sets the protected stream key.
+        /// </summary>
+        public IBuffer ProtectedStreamKey { get; set; }
+
+        /// <summary>
         /// Gets or sets the database schema.
         /// Only major and minor version is used.
         /// </summary>

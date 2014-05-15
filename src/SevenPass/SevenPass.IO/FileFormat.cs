@@ -359,6 +359,11 @@ namespace SevenPass.IO
                         result.TransformRounds = BitConverter.ToUInt64(
                             buffer.ToArray(), 0);
                         break;
+
+                    case HeaderFields.ProtectedStreamKey:
+                        result.ProtectedStreamKey = buffer
+                            .ToArray().AsBuffer();
+                        break;
                 }
             }
         }
