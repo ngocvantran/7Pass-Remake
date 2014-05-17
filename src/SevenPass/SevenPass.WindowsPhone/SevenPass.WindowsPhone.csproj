@@ -85,6 +85,12 @@
     <Compile Include="..\..\GlobalInfo.cs">
       <Link>Properties\GlobalInfo.cs</Link>
     </Compile>
+    <Compile Include="Entry\Views\EntryAttachmentsView.xaml.cs">
+      <DependentUpon>EntryAttachmentsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Entry\Views\EntryAttachmentView.xaml.cs">
+      <DependentUpon>EntryAttachmentView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Entry\Views\EntryDetailsView.xaml.cs">
       <DependentUpon>EntryDetailsView.xaml</DependentUpon>
     </Compile>
@@ -169,6 +175,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Entry\Views\EntryAttachmentsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Entry\Views\EntryAttachmentView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Entry\Views\EntryDetailsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Xml.Linq;
-using Windows.UI.Xaml.Controls.Maps;
 using Caliburn.Micro;
 
 namespace SevenPass.Entry.ViewModels
@@ -61,7 +60,7 @@ namespace SevenPass.Entry.ViewModels
 
             var attachments = element
                 .Elements("Binary")
-                .Select(x => new EntryAttachmentViewModel
+                .Select(x => new EntryAttachmentViewModel(x)
                 {
                     Key = (string)x.Element("Key"),
                     Value = x.Element("Value"),

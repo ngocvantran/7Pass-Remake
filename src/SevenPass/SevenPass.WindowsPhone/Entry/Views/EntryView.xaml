@@ -23,9 +23,8 @@
     <Page.Resources>
         <DataTemplate x:Key="HeaderTemplate"
             d:DataContext="d:DesignInstance IEntrySubViewModel">
-            <TextBlock Name="DatabaseName" Text="{Binding DisplayName}"
-                Style="{ThemeResource TitleTextBlockStyle}"
-                Typography.Capitals="SmallCaps" />
+            <TextBlock Text="{Binding DisplayName}" Margin="0,12,0,0"
+                Style="{ThemeResource HeaderTextBlockStyle}" />
         </DataTemplate>
 
         <DataTemplate x:Key="ContentTemplate">
@@ -39,5 +38,13 @@
     <Hub Header="{Binding DatabaseName}"
         views:HubBinder.DataSource="{Binding Items}"
         views:HubBinder.HeaderTemplate="{StaticResource HeaderTemplate}"
-        views:HubBinder.SectionTemplate="{StaticResource ContentTemplate}" />
+        views:HubBinder.SectionTemplate="{StaticResource ContentTemplate}">
+        <Hub.HeaderTemplate>
+            <DataTemplate>
+                <TextBlock Text="{Binding}"
+                    Margin="24,17,0,28" Typography.Capitals="SmallCaps"
+                    Style="{ThemeResource TitleTextBlockStyle}" />
+            </DataTemplate>
+        </Hub.HeaderTemplate>
+    </Hub>
 </Page>
