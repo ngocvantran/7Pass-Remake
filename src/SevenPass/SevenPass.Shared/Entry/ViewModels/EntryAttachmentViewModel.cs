@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Security.Cryptography;
 using Windows.Storage;
 using Windows.System;
@@ -12,6 +13,8 @@ namespace SevenPass.Entry.ViewModels
     public sealed class EntryAttachmentViewModel
     {
         private readonly XElement _element;
+
+        public bool IsSharing { get; set; }
 
         /// <summary>
         /// Gets or sets the name.
@@ -47,12 +50,11 @@ namespace SevenPass.Entry.ViewModels
             // TODO
         }
 
-        public void Share()
-        {
-            // TODO
-        }
-
-        private async Task<IStorageFile> SaveToFile()
+        /// <summary>
+        /// Saves content of this attachment to a temp file.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IStorageFile> SaveToFile()
         {
             var target = await ApplicationData.Current.TemporaryFolder
                 .CreateFolderAsync("Attachments",
@@ -85,6 +87,12 @@ namespace SevenPass.Entry.ViewModels
             }
 
             return file;
+        }
+
+        public void Share()
+        {
+            IsSharing = true;
+            DataTransferManager.ShowShareUI();
         }
     }
 }

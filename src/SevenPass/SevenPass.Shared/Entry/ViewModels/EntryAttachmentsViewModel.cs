@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Xml.Linq;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml;
 using Caliburn.Micro;
 
@@ -10,6 +11,7 @@ namespace SevenPass.Entry.ViewModels
     {
         private readonly BindableCollection<EntryAttachmentViewModel> _items;
         private Visibility _listVisibility;
+        private DataTransferManager _transferManager;
 
         /// <summary>
         /// Gets the attachments.
@@ -49,6 +51,33 @@ namespace SevenPass.Entry.ViewModels
         {
             DisplayName = "Attachments";
             _items = new BindableCollection<EntryAttachmentViewModel>();
+        }
+
+        protected override void OnActivate()
+        {
+            _transferManager = DataTransferManager.GetForCurrentView();
+            _transferManager.DataRequested += OnDataRequested;
+        }
+
+        private async void OnDataRequested(DataTransferManager sender, DataRequestedEventArgs args)
+        {
+            var sharing = _items.FirstOrDefault(x => x.IsSharing);
+            if (sharing == null)
+                return;
+
+            sharing.IsSharing = false;
+            var data = args.Request.Data;
+            var defer = args.Request.GetDeferral();
+
+            var file = await sharing.SaveToFile();
+            data.Properties.Title = file.Name;
+            data.SetStorageItems(new[] {file}, true);
+            defer.Complete();
+        }
+
+        protected override void OnDeactivate(bool close)
+        {
+            _transferManager.DataRequested -= OnDataRequested;
         }
 
         protected override void Populate(XElement element)
