@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -159,6 +160,9 @@ namespace SevenPass.ViewModels
                     _navigation
                         .UriFor<GroupViewModel>()
                         .Navigate();
+
+                    _navigation.BackStack.Remove(
+                        _navigation.BackStack.Last());
                 }
             }
         }
