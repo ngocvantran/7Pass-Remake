@@ -3,7 +3,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Windows.System;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Input;
 using Caliburn.Micro;
 using SevenPass.IO;
 using SevenPass.Messages;
@@ -108,6 +110,12 @@ namespace SevenPass.ViewModels
             NotifyOfPropertyChange(() => CanOpenDatabase);
             NotifyOfPropertyChange(() => CanClearKeyfile);
             NotifyOfPropertyChange(() => KeyfileGroupVisibility);
+        }
+
+        public async void CheckEnterKey(KeyRoutedEventArgs args)
+        {
+            if (args.Key == VirtualKey.Enter)
+                await OpenDatabase();
         }
 
         /// <summary>
