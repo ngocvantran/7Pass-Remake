@@ -4,7 +4,7 @@ using Caliburn.Micro;
 
 namespace SevenPass.Entry.ViewModels
 {
-    public class EntrySubViewModelBase : Screen, IEntrySubViewModel
+    public abstract class EntrySubViewModelBase : Screen, IEntrySubViewModel
     {
         private XElement _entry;
 
@@ -29,6 +29,6 @@ namespace SevenPass.Entry.ViewModels
         /// Populate values from entry.
         /// </summary>
         /// <param name="element"></param>
-        protected virtual void Populate(XElement element) {}
+        protected abstract void Populate(XElement element);
     }
 }

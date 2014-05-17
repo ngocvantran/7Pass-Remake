@@ -1,0 +1,57 @@
+﻿<UserControl
+    x:Class="SevenPass.Entry.Views.EntryFieldItemView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="using:SevenPass.Entry.ViewModels"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    d:DataContext="{d:DesignInstance viewModels:EntryFieldItemViewModel}">
+
+    <Grid>
+        <StackPanel Visibility="{Binding SummaryViewVisibility}">
+            <TextBlock Text="{Binding Key}"
+                Margin="{ThemeResource TextControlHeaderMarginThemeThickness}"
+                Style="{ThemeResource ControlHeaderTextBlockStyle}" />
+
+            <TextBlock Text="{Binding Value}"
+                Style="{ThemeResource BodyTextBlockStyle}"
+                Visibility="{Binding ExposedValueVisibility}" />
+            <TextBlock Text="Hidden" FontStyle="Italic"
+                Style="{ThemeResource BodyTextBlockStyle}"
+                Visibility="{Binding ProtectedValueVisibility}" />
+        </StackPanel>
+
+        <Grid Visibility="{Binding ExpandedViewVisibility}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Border Grid.RowSpan="3" Width="8" Margin="0,0,4,0"
+                Background="{ThemeResource PhoneAccentBrush}" />
+
+            <TextBox Name="Key" Header="Key"
+                Grid.Column="1" Grid.Row="0" />
+
+            <TextBox Text="{Binding Value}" Header="Value"
+                Visibility="{Binding ExposedValueVisibility}"
+                Grid.Column="1" Grid.Row="1" />
+            <PasswordBox Name="Value" Header="Value"
+                Grid.Column="1" Grid.Row="1"
+                Visibility="{Binding ProtectedValueVisibility}"
+                IsPasswordRevealButtonEnabled="True" />
+
+            <ToggleSwitch Name="IsProtected" Header="Protected"
+                Grid.Column="1" Grid.Row="2" />
+        </Grid>
+    </Grid>
+</UserControl>

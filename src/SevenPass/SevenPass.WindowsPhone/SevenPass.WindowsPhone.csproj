@@ -88,6 +88,15 @@
     <Compile Include="Entry\Views\EntryDetailsView.xaml.cs">
       <DependentUpon>EntryDetailsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Entry\Views\EntryFieldItemView.xaml.cs">
+      <DependentUpon>EntryFieldItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Entry\Views\EntryFieldsView.xaml.cs">
+      <DependentUpon>EntryFieldsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Entry\Views\EntryNotesView.xaml.cs">
+      <DependentUpon>EntryNotesView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\DatabaseItemView.xaml.cs">
       <DependentUpon>DatabaseItemView.xaml</DependentUpon>
@@ -161,6 +170,18 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Entry\Views\EntryDetailsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Entry\Views\EntryFieldItemView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Entry\Views\EntryFieldsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Entry\Views\EntryNotesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

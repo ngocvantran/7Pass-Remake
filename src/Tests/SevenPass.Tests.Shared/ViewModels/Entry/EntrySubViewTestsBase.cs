@@ -9,45 +9,49 @@ namespace SevenPass.Tests.ViewModels.Entry
     public abstract class EntrySubViewTestsBase<T>
         where T : EntrySubViewModelBase, new()
     {
-        private readonly XElement _element;
-        private readonly T _viewModel;
+        protected readonly XElement Element;
+        protected readonly T ViewModel;
 
         protected EntrySubViewTestsBase(XElement element)
         {
             if (element == null)
                 throw new ArgumentNullException("element");
 
-            _element = element;
-            _viewModel = new T();
+            Element = element;
+            ViewModel = new T();
         }
 
         [Fact]
         public void Initialize_should_populate_fields()
         {
-            _viewModel.Loads(_element);
-            ScreenExtensions.TryActivate(_viewModel);
-
-            AssertValues(_viewModel);
+            Populate();
+            AssertValues(ViewModel);
         }
 
         [Fact]
         public void Loads_should_not_populate_fields_if_not_initialized()
         {
-            _viewModel.Loads(_element);
-            Assert.Null(GetLoadedIndicator(_viewModel));
+            ViewModel.Loads(Element);
+            Assert.Null(GetLoadedIndicator(ViewModel));
         }
 
         [Fact]
         public void Loads_should_populate_fields_if_already_initialized()
         {
-            ScreenExtensions.TryActivate(_viewModel);
-            _viewModel.Loads(_element);
+            ScreenExtensions.TryActivate(ViewModel);
+            ViewModel.Loads(Element);
 
-            Assert.NotNull(GetLoadedIndicator(_viewModel));
+            Assert.NotNull(GetLoadedIndicator(ViewModel));
         }
 
         protected abstract void AssertValues(T viewModel);
 
         protected abstract object GetLoadedIndicator(T viewModel);
+
+        protected void Populate()
+        {
+            ViewModel.Loads(Element);
+            ScreenExtensions.TryActivate(ViewModel);
+        }
     }
 }
