@@ -108,14 +108,34 @@ namespace SevenPass.ViewModels
         /// <param name="item">The item to open.</param>
         private void Open(object item)
         {
+            if (!OpenGroup(item))
+                OpenEntry(item);
+        }
+
+        private void OpenEntry(object item)
+        {
+            var entry = item as EntryItemViewModel;
+            if (entry == null)
+                return;
+
+            _navigation
+                .UriFor<EntryViewModel>()
+                .WithParam(x => x.Id, entry.Id)
+                .Navigate();
+        }
+
+        private bool OpenGroup(object item)
+        {
             var group = item as GroupItemViewModel;
             if (group == null)
-                return;
+                return false;
 
             _navigation
                 .UriFor<GroupViewModel>()
                 .WithParam(x => x.Id, group.Id)
                 .Navigate();
+
+            return true;
         }
     }
 }

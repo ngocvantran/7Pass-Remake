@@ -14,5 +14,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\CacheServiceTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestIO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\EntryItemViewModelTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\EntryViewModelTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\GroupViewModelTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MockNavigationService.cs" />
   </ItemGroup>
 </Project>

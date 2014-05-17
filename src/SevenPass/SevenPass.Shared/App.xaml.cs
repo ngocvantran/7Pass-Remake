@@ -32,11 +32,14 @@ namespace SevenPass
 
         protected override void Configure()
         {
+            LogManager.GetLog = x => new DebugLog(x);
+
             _container = new WinRTContainer();
             _container.RegisterWinRTServices();
 
             _container.PerRequest<MainViewModel>();
             _container.PerRequest<GroupViewModel>();
+            _container.PerRequest<EntryViewModel>();
             _container.PerRequest<PasswordViewModel>();
 
             _container.Instance(AutoMaps.Initialize());

@@ -33,10 +33,10 @@ namespace SevenPass.ViewModels
 
         public GroupItemViewModel(GroupItemModel group)
         {
-            if (@group == null)
+            if (group == null)
                 throw new ArgumentNullException("group");
 
-            _group = @group;
+            _group = group;
         }
     }
 }

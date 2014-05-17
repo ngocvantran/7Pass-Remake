@@ -38,6 +38,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\Picker\FilePickTargets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Picker\IFilePickerService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DatabaseItemViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\EntryViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\GroupViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\EntryItemViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\GroupItemViewModel.cs" />

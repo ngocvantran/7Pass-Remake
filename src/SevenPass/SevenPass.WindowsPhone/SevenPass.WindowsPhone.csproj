@@ -89,6 +89,9 @@
     <Compile Include="Views\DatabaseItemView.xaml.cs">
       <DependentUpon>DatabaseItemView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\EntryView.xaml.cs">
+      <DependentUpon>EntryView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\GroupView.xaml.cs">
       <DependentUpon>GroupView.xaml</DependentUpon>
     </Compile>
@@ -155,6 +158,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\DatabaseItemView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EntryView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
