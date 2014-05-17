@@ -4,11 +4,24 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:cal="using:Caliburn.Micro"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <StackPanel Orientation="Horizontal">
+    <UserControl.Resources>
+        <MenuFlyout x:Key="AttachmentActions">
+            <MenuFlyoutItem Text="Open" cal:Message.Attach="Open" />
+            <MenuFlyoutItem Text="Save" cal:Message.Attach="Save" />
+            <MenuFlyoutItem Text="Share" cal:Message.Attach="Share" />
+            
+            <MenuFlyoutSeparator />
+            <MenuFlyoutItem Text="Delete" cal:Message.Attach="Delete" />
+        </MenuFlyout>
+    </UserControl.Resources>
+
+    <StackPanel Orientation="Horizontal" Tapped="OnTapped"
+        FlyoutBase.AttachedFlyout="{StaticResource AttachmentActions}">
         <TextBlock Text="&#xE16C;" Margin="0,0,8,0"
             Style="{StaticResource IconBlock}" />
         <TextBlock Name="Key" Style="{ThemeResource ListViewItemTextBlockStyle}" />

@@ -32,8 +32,8 @@ namespace SevenPass
 
         protected override void Configure()
         {
-            if (System.Diagnostics.Debugger.IsAttached)
-                LogManager.GetLog = x => new DebugLog(x);
+            /*if (System.Diagnostics.Debugger.IsAttached)
+                LogManager.GetLog = x => new DebugLog(x);*/
 
             RegisterServices();
         }
