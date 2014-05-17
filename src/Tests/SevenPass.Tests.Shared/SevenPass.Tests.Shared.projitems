@@ -15,6 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\CacheServiceTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestIO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\EntryItemViewModelTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Entry\EntryAttachmentsViewModelTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Entry\EntryDetailsViewModelTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Entry\EntryFieldsViewModelTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Entry\EntryNotesViewModelTests.cs" />

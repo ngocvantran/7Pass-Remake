@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Xml.Linq;
 using Caliburn.Micro;
 using SevenPass.Entry.ViewModels;
@@ -35,7 +36,13 @@ namespace SevenPass.Tests.ViewModels.Entry
         public void Loads_should_not_populate_fields_if_not_initialized()
         {
             ViewModel.Loads(Element);
-            Assert.Null(GetLoadedIndicator(ViewModel));
+            var indicator = GetLoadedIndicator(ViewModel);
+
+            var enumerable = indicator as IEnumerable;
+            if (enumerable != null)
+                Assert.Empty(enumerable);
+            else
+                Assert.Null(GetLoadedIndicator(ViewModel));
         }
 
         [Fact]
@@ -44,7 +51,12 @@ namespace SevenPass.Tests.ViewModels.Entry
             ScreenExtensions.TryActivate(ViewModel);
             ViewModel.Loads(Element);
 
-            Assert.NotNull(GetLoadedIndicator(ViewModel));
+            var indicator = GetLoadedIndicator(ViewModel);
+            Assert.NotNull(indicator);
+
+            var enumerable = indicator as IEnumerable;
+            if (enumerable != null)
+                Assert.NotEmpty(enumerable);
         }
 
         protected abstract void AssertValues(T viewModel);

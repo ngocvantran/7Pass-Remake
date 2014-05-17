@@ -111,8 +111,7 @@ namespace SevenPass.Tests.ViewModels.Entry
 
         protected override object GetLoadedIndicator(EntryFieldsViewModel viewModel)
         {
-            return viewModel.Items.Any()
-                ? new object() : null;
+            return viewModel.Items;
         }
     }
 }
