@@ -1,11 +1,13 @@
 ﻿using System;
 using Windows.UI.Xaml;
 using Caliburn.Micro;
+using SevenPass.Messages;
 
 namespace SevenPass.Entry.ViewModels
 {
     public class EntryFieldItemViewModel : PropertyChangedBase
     {
+        private readonly IEventAggregator _events;
         private bool _isExpanded;
         private bool _isProtected;
         private string _key;
@@ -45,10 +47,19 @@ namespace SevenPass.Entry.ViewModels
             get { return _isExpanded; }
             set
             {
+                if (value == _isExpanded)
+                    return;
+
                 _isExpanded = value;
                 NotifyOfPropertyChange(() => IsExpanded);
                 NotifyOfPropertyChange(() => SummaryViewVisibility);
                 NotifyOfPropertyChange(() => ExpandedViewVisibility);
+
+                if (_isExpanded)
+                {
+                    _events.PublishOnUIThread(
+                        new EntryFieldExpandedMessage(this));
+                }
             }
         }
 
@@ -114,6 +125,22 @@ namespace SevenPass.Entry.ViewModels
                 _value = value;
                 NotifyOfPropertyChange(() => Value);
             }
+        }
+
+        public EntryFieldItemViewModel(IEventAggregator events)
+        {
+            if (events == null)
+                throw new ArgumentNullException("events");
+
+            _events = events;
+        }
+
+        /// <summary>
+        /// Expands this view.
+        /// </summary>
+        public void Expand()
+        {
+            IsExpanded = true;
         }
     }
 }

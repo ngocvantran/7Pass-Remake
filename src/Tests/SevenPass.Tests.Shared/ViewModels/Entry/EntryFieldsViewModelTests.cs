@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Linq;
 using System.Xml.Linq;
+using Caliburn.Micro;
 using SevenPass.Entry.ViewModels;
+using SevenPass.Messages;
 using Xunit;
 
 namespace SevenPass.Tests.ViewModels.Entry
 {
-    public class EntryFieldsViewModelTests
-        : EntrySubViewTestsBase<EntryFieldsViewModel>
+    public class EntryFieldsViewModelTests : EntrySubViewTestsBase
+        <EntryFieldsViewModelTests.MockedEntryFieldsViewModel>
     {
         public EntryFieldsViewModelTests()
             : base(new XElement("entry",
@@ -80,29 +82,38 @@ namespace SevenPass.Tests.ViewModels.Entry
         [Fact]
         public void Should_update_IsExpanded_state_of_items()
         {
-            var item1 = new EntryFieldItemViewModel();
-            var item2 = new EntryFieldItemViewModel();
+            var events = new EventAggregator();
+            var item1 = new EntryFieldItemViewModel(events);
+            var item2 = new EntryFieldItemViewModel(events);
 
             ViewModel.Items.Add(item1);
             ViewModel.Items.Add(item2);
 
-            ViewModel.SelectedItem = item1;
+            item1.Expand();
+            ViewModel.Handle(new EntryFieldExpandedMessage(item1));
             Assert.True(item1.IsExpanded);
             Assert.False(item2.IsExpanded);
 
-            ViewModel.SelectedItem = item2;
+            item2.Expand();
+            ViewModel.Handle(new EntryFieldExpandedMessage(item2));
             Assert.False(item1.IsExpanded);
             Assert.True(item2.IsExpanded);
         }
 
-        protected override void AssertValues(EntryFieldsViewModel viewModel)
+        protected override void AssertValues(MockedEntryFieldsViewModel viewModel)
         {
             Assert.Equal(2, viewModel.Items.Count);
         }
 
-        protected override object GetLoadedIndicator(EntryFieldsViewModel viewModel)
+        protected override object GetLoadedIndicator(MockedEntryFieldsViewModel viewModel)
         {
             return viewModel.Items.Any() ? new object() : null;
+        }
+
+        public class MockedEntryFieldsViewModel : EntryFieldsViewModel
+        {
+            public MockedEntryFieldsViewModel()
+                : base(new EventAggregator()) {}
         }
     }
 }

@@ -5,13 +5,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="using:SevenPass.Entry.ViewModels"
+    xmlns:micro="using:Caliburn.Micro"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
     d:DataContext="{d:DesignInstance viewModels:EntryFieldItemViewModel}">
 
     <Grid>
-        <StackPanel Visibility="{Binding SummaryViewVisibility}">
+        <StackPanel Visibility="{Binding SummaryViewVisibility}"
+            micro:Message.Attach="[Event Tapped] = [Action Expand()]">
             <TextBlock Text="{Binding Key}"
                 Margin="{ThemeResource TextControlHeaderMarginThemeThickness}"
                 Style="{ThemeResource ControlHeaderTextBlockStyle}" />
@@ -36,7 +38,7 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <Border Grid.RowSpan="3" Width="8" Margin="0,0,4,0"
+            <Border Grid.RowSpan="3" Width="4" Margin="0,4,8,4"
                 Background="{ThemeResource PhoneAccentBrush}" />
 
             <TextBox Name="Key" Header="Key"

@@ -2,16 +2,17 @@
 using System.Linq;
 using System.Xml.Linq;
 using Caliburn.Micro;
+using SevenPass.Messages;
 
 namespace SevenPass.Entry.ViewModels
 {
     // TODO: collapse selected item on Back button press
 
-    public class EntryFieldsViewModel : EntrySubViewModelBase
+    public class EntryFieldsViewModel : EntrySubViewModelBase,
+        IHandle<EntryFieldExpandedMessage>
     {
+        private readonly IEventAggregator _events;
         private readonly BindableCollection<EntryFieldItemViewModel> _items;
-
-        private EntryFieldItemViewModel _selectedItem;
 
         /// <summary>
         /// Gets the field items.
@@ -21,29 +22,23 @@ namespace SevenPass.Entry.ViewModels
             get { return _items; }
         }
 
-        /// <summary>
-        /// Gets or sets the selected item.
-        /// </summary>
-        public EntryFieldItemViewModel SelectedItem
+        public EntryFieldsViewModel(IEventAggregator events)
         {
-            get { return _selectedItem; }
-            set
-            {
-                if (_selectedItem != null)
-                    _selectedItem.IsExpanded = false;
+            if (events == null)
+                throw new ArgumentNullException("events");
 
-                _selectedItem = value;
-                NotifyOfPropertyChange(() => SelectedItem);
-
-                if (value != null)
-                    value.IsExpanded = true;
-            }
-        }
-
-        public EntryFieldsViewModel()
-        {
+            _events = events;
             _items = new BindableCollection<EntryFieldItemViewModel>();
             base.DisplayName = "Fields";
+        }
+
+        public void Handle(EntryFieldExpandedMessage message)
+        {
+            var expanded = message.Item;
+
+            Items
+                .Where(x => !ReferenceEquals(x, expanded))
+                .Apply(x => x.IsExpanded = false);
         }
 
         protected override void Populate(XElement element)
@@ -59,7 +54,7 @@ namespace SevenPass.Entry.ViewModels
                     Value = x.Element("Value"),
                 })
                 .Where(x => !IsStandardField(x.Key))
-                .Select(x => new EntryFieldItemViewModel
+                .Select(x => new EntryFieldItemViewModel(_events)
                 {
                     Key = x.Key,
                     Value = (string)x.Value,

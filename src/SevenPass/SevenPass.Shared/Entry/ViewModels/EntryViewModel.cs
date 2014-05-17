@@ -9,6 +9,7 @@ namespace SevenPass.Entry.ViewModels
     public class EntryViewModel : Conductor<IEntrySubViewModel>.Collection.OneActive
     {
         private readonly ICacheService _cache;
+        private readonly IEventAggregator _events;
         private readonly IEntrySubViewModel[] _views;
 
         private string _databaseName;
@@ -32,18 +33,21 @@ namespace SevenPass.Entry.ViewModels
         public string Id { get; set; }
 
         public EntryViewModel(ICacheService cache,
-            IEnumerable<IEntrySubViewModel> views)
+            IEventAggregator events, IEnumerable<IEntrySubViewModel> views)
         {
             if (cache == null) throw new ArgumentNullException("cache");
+            if (events == null) throw new ArgumentNullException("events");
             if (views == null) throw new ArgumentNullException("views");
 
             _cache = cache;
+            _events = events;
             _views = views.ToArray();
         }
 
         protected override void OnInitialize()
         {
             Items.AddRange(_views);
+            _views.Apply(_events.Subscribe);
             DatabaseName = _cache.Database.Name;
 
             var entry = _cache.GetEntry(Id);
