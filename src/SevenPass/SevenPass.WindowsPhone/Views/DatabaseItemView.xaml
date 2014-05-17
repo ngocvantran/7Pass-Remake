@@ -5,8 +5,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:cal="using:Caliburn.Micro"
+    xmlns:viewModels="using:SevenPass.ViewModels"
     mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="400"
-    Holding="OnHolding" IsHoldingEnabled="True">
+    Holding="OnHolding" IsHoldingEnabled="True"
+    d:DataContext="{d:DesignInstance viewModels:DatabaseItemViewModel}">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -33,7 +35,10 @@
 
     <FlyoutBase.AttachedFlyout>
         <MenuFlyout>
-            <MenuFlyoutItem Text="pin" cal:Message.Attach="Pin" />
+            <MenuFlyoutItem Text="pin" cal:Message.Attach="Pin"
+                Visibility="{Binding PinVisibility}" />
+            <MenuFlyoutItem Text="unpin" cal:Message.Attach="Unpin"
+                Visibility="{Binding UnpinVisibility}" />
             <MenuFlyoutItem Text="delete" cal:Message.Attach="Delete" />
         </MenuFlyout>
     </FlyoutBase.AttachedFlyout>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.UI.StartScreen;
 using AutoMapper;
 using Caliburn.Micro;
 using SevenPass.Messages;
@@ -97,7 +98,20 @@ namespace SevenPass.ViewModels
                 FilePickTargets.Databases);
         }
 
-        protected override void OnInitialize()
+        protected override async void OnActivate()
+        {
+            var tiles = await SecondaryTile.FindAllAsync();
+            var list = tiles.ToDictionary(x => x.TileId);
+
+            foreach (var item in _databases)
+            {
+                SecondaryTile tile;
+                list.TryGetValue(item.TileId, out tile);
+                item.Tile = tile;
+            }
+        }
+
+        protected override async void OnInitialize()
         {
             _databases.Clear();
 
