@@ -9,7 +9,7 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
-    d:DataContext="{d:DesignInstance viewModels:EntryFieldItemViewModel}">
+    d:DataContext="{d:DesignInstance viewModels:EntryFieldViewModel}">
 
     <Grid>
         <StackPanel Visibility="{Binding SummaryViewVisibility}"
@@ -45,12 +45,7 @@
                 Grid.Column="1" Grid.Row="0" />
 
             <TextBox Text="{Binding Value}" Header="Value"
-                Visibility="{Binding ExposedValueVisibility}"
                 Grid.Column="1" Grid.Row="1" />
-            <PasswordBox Name="Value" Header="Value"
-                Grid.Column="1" Grid.Row="1"
-                Visibility="{Binding ProtectedValueVisibility}"
-                IsPasswordRevealButtonEnabled="True" />
 
             <ToggleSwitch Name="IsProtected" Header="Protected"
                 Grid.Column="1" Grid.Row="2" />
