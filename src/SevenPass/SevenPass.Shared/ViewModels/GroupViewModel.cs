@@ -10,7 +10,7 @@ namespace SevenPass.ViewModels
     /// <summary>
     /// ViewModel to display database data.
     /// </summary>
-    public class DatabaseViewModel : Screen
+    public class GroupViewModel : Screen
     {
         private readonly ICacheService _cache;
         private readonly BindableCollection<object> _items;
@@ -26,7 +26,7 @@ namespace SevenPass.ViewModels
         /// <summary>
         /// Gets or sets the UUID of the group to be displayed.
         /// </summary>
-        public string Group { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// Gets or sets the group items.
@@ -55,7 +55,7 @@ namespace SevenPass.ViewModels
             }
         }
 
-        public DatabaseViewModel(ICacheService cache,
+        public GroupViewModel(ICacheService cache,
             INavigationService navigation)
         {
             if (cache == null) throw new ArgumentNullException("cache");
@@ -75,9 +75,11 @@ namespace SevenPass.ViewModels
         {
             return Task.Run(() =>
             {
-                var element = _cache.GetGroup(Group);
-                // TODO: handle group not found
+                var element = !string.IsNullOrEmpty(Id)
+                    ? _cache.GetGroup(Id)
+                    : _cache.Root;
 
+                // TODO: handle group not found
                 var group = new GroupItemModel(element);
                 base.DisplayName = group.Name;
 
@@ -111,8 +113,8 @@ namespace SevenPass.ViewModels
                 return;
 
             _navigation
-                .UriFor<DatabaseViewModel>()
-                .WithParam(x => x.Group, group.Id)
+                .UriFor<GroupViewModel>()
+                .WithParam(x => x.Id, group.Id)
                 .Navigate();
         }
     }

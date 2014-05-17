@@ -157,7 +157,7 @@ namespace SevenPass.ViewModels
                     });
 
                     _navigation
-                        .UriFor<DatabaseViewModel>()
+                        .UriFor<GroupViewModel>()
                         .Navigate();
                 }
             }

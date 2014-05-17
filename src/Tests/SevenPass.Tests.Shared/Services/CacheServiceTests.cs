@@ -126,6 +126,24 @@ namespace SevenPass.Tests.Services
         }
 
         [Fact]
+        public void Root_should_be_null_if_no_cache()
+        {
+            Assert.NotNull(_service.Root);
+
+            _service.Clear();
+            Assert.Null(_service.Root);
+        }
+
+        [Fact]
+        public void Root_should_provide_the_first_group_at_root()
+        {
+            var root = _service.Root;
+            Assert.NotNull(root);
+            Assert.Equal("Group", root.Name);
+            Assert.Equal("g01", (string)root.Element("UUID"));
+        }
+
+        [Fact]
         public void Should_provides_the_cached_database()
         {
             var db = new CachedDatabase

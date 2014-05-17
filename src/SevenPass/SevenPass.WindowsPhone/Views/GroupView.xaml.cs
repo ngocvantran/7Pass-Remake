@@ -2,9 +2,9 @@
 
 namespace SevenPass.Views
 {
-    public sealed partial class DatabaseView
+    public sealed partial class GroupView
     {
-        public DatabaseView()
+        public GroupView()
         {
             InitializeComponent();
         }

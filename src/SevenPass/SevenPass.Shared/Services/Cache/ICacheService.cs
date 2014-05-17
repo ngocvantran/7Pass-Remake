@@ -11,6 +11,11 @@ namespace SevenPass.Services.Cache
         CachedDatabase Database { get; }
 
         /// <summary>
+        /// Gets the root group.
+        /// </summary>
+        XElement Root { get; }
+
+        /// <summary>
         /// Stores the specified database in cache.
         /// </summary>
         /// <param name="database">The dataabase to be cached.</param>

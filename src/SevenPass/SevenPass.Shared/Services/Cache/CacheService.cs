@@ -15,6 +15,11 @@ namespace SevenPass.Services.Cache
         public CachedDatabase Database { get; private set; }
 
         /// <summary>
+        /// Gets the root group.
+        /// </summary>
+        public XElement Root { get; private set; }
+
+        /// <summary>
         /// Stores the specified database in cache.
         /// </summary>
         /// <param name="database">The dataabase to be cached.</param>
@@ -32,6 +37,7 @@ namespace SevenPass.Services.Cache
                 .Descendants("Group")
                 .ToList();
 
+            Root = groups.FirstOrDefault();
             _groups = groups.ToLookup(x =>
                 (string)x.Element("UUID"));
             _entries = groups
@@ -44,6 +50,7 @@ namespace SevenPass.Services.Cache
         /// </summary>
         public void Clear()
         {
+            Root = null;
             _groups = null;
             _entries = null;
             Database = null;

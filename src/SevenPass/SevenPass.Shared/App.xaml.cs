@@ -36,7 +36,7 @@ namespace SevenPass
             _container.RegisterWinRTServices();
 
             _container.PerRequest<MainViewModel>();
-            _container.PerRequest<DatabaseViewModel>();
+            _container.PerRequest<GroupViewModel>();
             _container.PerRequest<PasswordViewModel>();
 
             _container.Instance(AutoMaps.Initialize());
