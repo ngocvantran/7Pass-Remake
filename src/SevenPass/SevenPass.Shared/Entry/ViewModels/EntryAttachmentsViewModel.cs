@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Xml.Linq;
+using Windows.UI.Xaml;
 using Caliburn.Micro;
 
 namespace SevenPass.Entry.ViewModels
@@ -8,6 +9,7 @@ namespace SevenPass.Entry.ViewModels
     public sealed class EntryAttachmentsViewModel : EntrySubViewModelBase
     {
         private readonly BindableCollection<EntryAttachmentViewModel> _items;
+        private Visibility _listVisibility;
 
         /// <summary>
         /// Gets the attachments.
@@ -17,40 +19,36 @@ namespace SevenPass.Entry.ViewModels
             get { return _items; }
         }
 
+        /// <summary>
+        /// Gets the visibility of the list.
+        /// </summary>
+        public Visibility ListVisibility
+        {
+            get { return _listVisibility; }
+            private set
+            {
+                _listVisibility = value;
+                NotifyOfPropertyChange(() => ListVisibility);
+                NotifyOfPropertyChange(() => NoAttachmentVisibility);
+            }
+        }
+
+        /// <summary>
+        /// Gets the visibility of empty data prompt.
+        /// </summary>
+        public Visibility NoAttachmentVisibility
+        {
+            get
+            {
+                return ListVisibility == Visibility.Visible
+                    ? Visibility.Collapsed : Visibility.Visible;
+            }
+        }
+
         public EntryAttachmentsViewModel()
         {
             DisplayName = "Attachments";
             _items = new BindableCollection<EntryAttachmentViewModel>();
-        }
-
-        private Lazy<ILookup<string, XElement>> GetReferences(XElement element)
-        {
-            return new Lazy<ILookup<string, XElement>>(() =>
-            {
-                var root = element.Parent;
-                while (true)
-                {
-                    if (root == null)
-                        return null;
-
-                    if (root.Name == "KeePassFile")
-                        break;
-
-                    root = root.Parent;
-                }
-
-                return root
-                    .Element("Meta")
-                    .Element("Binaries")
-                    .Elements("Binary")
-                    .Select(x => new
-                    {
-                        Element = x,
-                        Id = x.Attribute("ID"),
-                    })
-                    .Where(x => x.Id != null)
-                    .ToLookup(x => (string)x.Id, x => x.Element);
-            });
         }
 
         protected override void Populate(XElement element)
@@ -92,6 +90,40 @@ namespace SevenPass.Entry.ViewModels
             }
 
             Items.AddRange(attachments);
+
+            ListVisibility = Items.Any()
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
+        private Lazy<ILookup<string, XElement>> GetReferences(XElement element)
+        {
+            return new Lazy<ILookup<string, XElement>>(() =>
+            {
+                var root = element.Parent;
+                while (true)
+                {
+                    if (root == null)
+                        return null;
+
+                    if (root.Name == "KeePassFile")
+                        break;
+
+                    root = root.Parent;
+                }
+
+                return root
+                    .Element("Meta")
+                    .Element("Binaries")
+                    .Elements("Binary")
+                    .Select(x => new
+                    {
+                        Element = x,
+                        Id = x.Attribute("ID"),
+                    })
+                    .Where(x => x.Id != null)
+                    .ToLookup(x => (string)x.Id, x => x.Element);
+            });
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Xml.Linq;
+using Windows.UI.Xaml;
 using Caliburn.Micro;
 using SevenPass.Messages;
 
@@ -11,6 +12,7 @@ namespace SevenPass.Entry.ViewModels
     {
         private readonly IEventAggregator _events;
         private readonly BindableCollection<EntryFieldViewModel> _items;
+        private Visibility _listVisibility;
 
         /// <summary>
         /// Gets the field items.
@@ -18,6 +20,32 @@ namespace SevenPass.Entry.ViewModels
         public IObservableCollection<EntryFieldViewModel> Items
         {
             get { return _items; }
+        }
+
+        /// <summary>
+        /// Gets the visibility of the list.
+        /// </summary>
+        public Visibility ListVisibility
+        {
+            get { return _listVisibility; }
+            private set
+            {
+                _listVisibility = value;
+                NotifyOfPropertyChange(() => ListVisibility);
+                NotifyOfPropertyChange(() => NoFieldVisibility);
+            }
+        }
+
+        /// <summary>
+        /// Gets the visibility of empty data prompt.
+        /// </summary>
+        public Visibility NoFieldVisibility
+        {
+            get
+            {
+                return ListVisibility == Visibility.Visible
+                    ? Visibility.Collapsed : Visibility.Visible;
+            }
         }
 
         public EntryFieldsViewModel(IEventAggregator events)
@@ -60,6 +88,10 @@ namespace SevenPass.Entry.ViewModels
                 }));
 
             Items.Apply(_events.Subscribe);
+
+            ListVisibility = Items.Any()
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         private static bool IsProtected(XElement element)

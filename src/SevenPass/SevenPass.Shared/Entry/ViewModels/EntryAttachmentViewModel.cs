@@ -54,44 +54,37 @@ namespace SevenPass.Entry.ViewModels
 
         private async Task<IStorageFile> SaveToFile()
         {
-            try
+            var target = await ApplicationData.Current.TemporaryFolder
+                .CreateFolderAsync("Attachments",
+                    CreationCollisionOption.OpenIfExists);
+
+            var file = await target.CreateFileAsync(Key,
+                CreationCollisionOption.ReplaceExisting);
+
+            var value = Value;
+            var compressed = value.Attribute("Compressed");
+            var isCompressed = compressed != null && (bool)compressed;
+
+
+            if (!isCompressed)
             {
-                var target = await ApplicationData.Current.TemporaryFolder
-                    .CreateFolderAsync("Attachments",
-                        CreationCollisionOption.OpenIfExists);
-
-                var file = await target.CreateFileAsync(Key,
-                    CreationCollisionOption.ReplaceExisting);
-
-                var value = Value;
-                var compressed = value.Attribute("Compressed");
-                var isCompressed = compressed != null && (bool)compressed;
-
-
-                if (!isCompressed)
-                {
-                    var buffer = CryptographicBuffer
-                        .DecodeFromBase64String(value.Value);
-                    await FileIO.WriteBufferAsync(file, buffer);
-                }
-                else
-                {
-                    var bytes = Convert.FromBase64String(value.Value);
-
-                    using (var buffer = new MemoryStream(bytes))
-                    using (var gz = new GZipStream(buffer, CompressionMode.Decompress))
-                    using (var output = await file.OpenStreamForWriteAsync())
-                    {
-                        await gz.CopyToAsync(output);
-                    }
-                }
-
-                return file;
+                var buffer = CryptographicBuffer
+                    .DecodeFromBase64String(value.Value);
+                await FileIO.WriteBufferAsync(file, buffer);
             }
-            catch (Exception exception)
+            else
             {
-                throw;
+                var bytes = Convert.FromBase64String(value.Value);
+
+                using (var buffer = new MemoryStream(bytes))
+                using (var gz = new GZipStream(buffer, CompressionMode.Decompress))
+                using (var output = await file.OpenStreamForWriteAsync())
+                {
+                    await gz.CopyToAsync(output);
+                }
             }
+
+            return file;
         }
     }
 }

@@ -4,9 +4,19 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="using:SevenPass.Entry.ViewModels"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
-    
-    <ItemsControl Name="Items" />
+    d:DesignWidth="400"
+    d:DataContext="{d:DesignInstance viewModels:EntryFieldsViewModel}">
+
+    <Grid>
+        <TextBlock Text="No field defined, tap on add to create"
+            FontStyle="Italic" TextAlignment="Center"
+            Visibility="{Binding NoFieldVisibility}"
+            Style="{ThemeResource ControlHeaderTextBlockStyle}" />
+
+        <ItemsControl Name="Items" Visibility="{Binding ListVisibility}" />
+    </Grid>
+
 </UserControl>
