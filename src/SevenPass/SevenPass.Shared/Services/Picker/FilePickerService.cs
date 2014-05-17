@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
@@ -49,6 +50,7 @@ namespace SevenPass.Services.Picker
             if (openPars != null)
             {
                 object target;
+                var all = openPars.ContinuationData.ToList();
                 if (!openPars.ContinuationData.TryGetValue("Target", out target))
                     return;
 
@@ -92,7 +94,7 @@ namespace SevenPass.Services.Picker
 
 #if WINDOWS_PHONE_APP
             picker.ContinuationData.Add(
-                "Source", target.ToString());
+                "Target", target.ToString());
             picker.PickSingleFileAndContinue();
 #else
             var file = await picker.PickSingleFileAsync();
