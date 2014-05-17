@@ -1,4 +1,5 @@
 ﻿using System;
+using Windows.UI.Xaml;
 
 namespace SevenPass.Views
 {
@@ -7,6 +8,11 @@ namespace SevenPass.Views
         public PasswordView()
         {
             InitializeComponent();
+        }
+
+        private void OnPasswordLoaded(object sender, RoutedEventArgs e)
+        {
+            Password.Focus(FocusState.Programmatic);
         }
     }
 }
