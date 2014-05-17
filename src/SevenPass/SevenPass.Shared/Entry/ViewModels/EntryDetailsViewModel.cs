@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using System.Xml.Linq;
 
 namespace SevenPass.Entry.ViewModels
@@ -75,10 +76,23 @@ namespace SevenPass.Entry.ViewModels
                 .ToLookup(x => (string)x.Element("Key"),
                     x => (string)x.Element("Value"));
 
-            Url = strings["URL"].FirstOrDefault();
             Title = strings["Title"].FirstOrDefault();
             UserName = strings["UserName"].FirstOrDefault();
             Password = strings["Password"].FirstOrDefault();
+
+            var url = new StringBuilder(strings["URL"]
+                .FirstOrDefault() ?? string.Empty);
+
+            if (url.Length > 0)
+            {
+                foreach (var item in strings)
+                {
+                    var key = "{S:" + item.Key + "}";
+                    url.Replace(key, item.First());
+                }
+            }
+
+            Url = url.ToString();
         }
     }
 }
