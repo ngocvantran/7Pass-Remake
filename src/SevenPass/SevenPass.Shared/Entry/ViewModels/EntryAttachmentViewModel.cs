@@ -7,12 +7,14 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Security.Cryptography;
 using Windows.Storage;
 using Windows.System;
+using SevenPass.Services.Picker;
 
 namespace SevenPass.Entry.ViewModels
 {
     public sealed class EntryAttachmentViewModel
     {
         private readonly XElement _element;
+        private readonly IFilePickerService _picker;
 
         public bool IsSharing { get; set; }
 
@@ -26,11 +28,13 @@ namespace SevenPass.Entry.ViewModels
         /// </summary>
         public XElement Value { get; set; }
 
-        public EntryAttachmentViewModel(XElement element)
+        public EntryAttachmentViewModel(XElement element,
+            IFilePickerService picker)
         {
-            if (element == null)
-                throw new ArgumentNullException("element");
+            if (element == null) throw new ArgumentNullException("element");
+            if (picker == null) throw new ArgumentNullException("picker");
 
+            _picker = picker;
             _element = element;
         }
 
@@ -45,9 +49,10 @@ namespace SevenPass.Entry.ViewModels
             await Launcher.LaunchFileAsync(file);
         }
 
-        public void Save()
+        public async void Save()
         {
-            // TODO
+            var file = await SaveToFile();
+            await _picker.SaveAsync(file);
         }
 
         /// <summary>

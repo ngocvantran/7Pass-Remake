@@ -4,12 +4,14 @@ using System.Xml.Linq;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml;
 using Caliburn.Micro;
+using SevenPass.Services.Picker;
 
 namespace SevenPass.Entry.ViewModels
 {
     public sealed class EntryAttachmentsViewModel : EntrySubViewModelBase
     {
         private readonly BindableCollection<EntryAttachmentViewModel> _items;
+        private readonly IFilePickerService _picker;
         private Visibility _listVisibility;
         private DataTransferManager _transferManager;
 
@@ -47,8 +49,12 @@ namespace SevenPass.Entry.ViewModels
             }
         }
 
-        public EntryAttachmentsViewModel()
+        public EntryAttachmentsViewModel(IFilePickerService picker)
         {
+            if (picker == null)
+                throw new ArgumentNullException("picker");
+
+            _picker = picker;
             DisplayName = "Attachments";
             _items = new BindableCollection<EntryAttachmentViewModel>();
         }
@@ -57,22 +63,6 @@ namespace SevenPass.Entry.ViewModels
         {
             _transferManager = DataTransferManager.GetForCurrentView();
             _transferManager.DataRequested += OnDataRequested;
-        }
-
-        private async void OnDataRequested(DataTransferManager sender, DataRequestedEventArgs args)
-        {
-            var sharing = _items.FirstOrDefault(x => x.IsSharing);
-            if (sharing == null)
-                return;
-
-            sharing.IsSharing = false;
-            var data = args.Request.Data;
-            var defer = args.Request.GetDeferral();
-
-            var file = await sharing.SaveToFile();
-            data.Properties.Title = file.Name;
-            data.SetStorageItems(new[] {file}, true);
-            defer.Complete();
         }
 
         protected override void OnDeactivate(bool close)
@@ -87,7 +77,7 @@ namespace SevenPass.Entry.ViewModels
 
             var attachments = element
                 .Elements("Binary")
-                .Select(x => new EntryAttachmentViewModel(x)
+                .Select(x => new EntryAttachmentViewModel(x, _picker)
                 {
                     Key = (string)x.Element("Key"),
                     Value = x.Element("Value"),
@@ -153,6 +143,22 @@ namespace SevenPass.Entry.ViewModels
                     .Where(x => x.Id != null)
                     .ToLookup(x => (string)x.Id, x => x.Element);
             });
+        }
+
+        private async void OnDataRequested(DataTransferManager sender, DataRequestedEventArgs args)
+        {
+            var sharing = _items.FirstOrDefault(x => x.IsSharing);
+            if (sharing == null)
+                return;
+
+            sharing.IsSharing = false;
+            var data = args.Request.Data;
+            var defer = args.Request.GetDeferral();
+
+            var file = await sharing.SaveToFile();
+            data.Properties.Title = file.Name;
+            data.SetStorageItems(new[] {file}, true);
+            defer.Complete();
         }
     }
 }

@@ -5,13 +5,18 @@ namespace SevenPass.Services.Picker
     public enum FilePickTargets
     {
         /// <summary>
-        /// File picker triggered by add database.
+        /// Open file picker triggered by add database.
         /// </summary>
         Databases,
 
         /// <summary>
-        /// File picker triggered by add keyfile page.
+        /// Open file picker triggered by add keyfile page.
         /// </summary>
         KeyFile,
+
+        /// <summary>
+        /// Save file picker triggered by save attachment page.
+        /// </summary>
+        Attachments,
     }
 }

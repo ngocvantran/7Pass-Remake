@@ -12,7 +12,7 @@
     <UserControl.Resources>
         <MenuFlyout x:Key="AttachmentActions">
             <MenuFlyoutItem Text="open" cal:Message.Attach="Open" />
-            <MenuFlyoutItem Text="save" cal:Message.Attach="Save" />
+            <MenuFlyoutItem Text="export" cal:Message.Attach="Save" />
             <MenuFlyoutItem Text="share" cal:Message.Attach="Share" />
             <MenuFlyoutItem Text="delete" cal:Message.Attach="Delete" />
         </MenuFlyout>

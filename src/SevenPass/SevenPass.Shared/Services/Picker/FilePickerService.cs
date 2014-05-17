@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
@@ -33,23 +35,46 @@ namespace SevenPass.Services.Picker
 #if !WINDOWS_PHONE_APP
             return;
 #else
-            if (args.Kind != ActivationKind.PickFileContinuation)
+            switch (args.Kind)
+            {
+                case ActivationKind.PickFileContinuation:
+                case ActivationKind.PickSaveFileContinuation:
+                    break;
+
+                default:
+                    return;
+            }
+
+            var openPars = args as FileOpenPickerContinuationEventArgs;
+            if (openPars != null)
+            {
+                object target;
+                if (!openPars.ContinuationData.TryGetValue("Target", out target))
+                    return;
+
+                if (!(target is string))
+                    return;
+
+                var value = (FilePickTargets)Enum.Parse(
+                    typeof(FilePickTargets), (string)target);
+                await Continue(value, openPars.Files[0]);
+
+                return;
+            }
+
+            var savePars = args as FileSavePickerContinuationEventArgs;
+            if (savePars == null || savePars.File == null)
                 return;
 
-            var pars = args as FileOpenPickerContinuationEventArgs;
-            if (pars == null)
+            object path;
+            if (!savePars.ContinuationData.TryGetValue("Source", out path))
                 return;
 
-            object target;
-            if (!pars.ContinuationData.TryGetValue("Target", out target))
+            if (!(path is string))
                 return;
 
-            if (!(target is string))
-                return;
-
-            var value = (FilePickTargets)Enum.Parse(
-                typeof(FilePickTargets), (string)target);
-            await Continue(value, pars.Files[0]);
+            var source = await StorageFile.GetFileFromPathAsync((string)path);
+            await Continue(FilePickTargets.Attachments, source, savePars.File);
 #endif
         }
 
@@ -67,7 +92,7 @@ namespace SevenPass.Services.Picker
 
 #if WINDOWS_PHONE_APP
             picker.ContinuationData.Add(
-                "Target", target.ToString());
+                "Source", target.ToString());
             picker.PickSingleFileAndContinue();
 #else
             var file = await picker.PickSingleFileAsync();
@@ -75,12 +100,37 @@ namespace SevenPass.Services.Picker
 #endif
         }
 
-        private async Task Continue(FilePickTargets target, IStorageFile file)
+        public async Task SaveAsync(IStorageFile file)
+        {
+            var picker = new FileSavePicker
+            {
+                SuggestedFileName = file.Name,
+            };
+
+            var extension = Path.GetExtension(file.Name);
+            if (string.IsNullOrEmpty(extension))
+                extension = ".unknown";
+
+            picker.FileTypeChoices.Add("Attachment File",
+                new List<string> {extension});
+
+
+#if WINDOWS_PHONE_APP
+            picker.ContinuationData.Add("Source", file.Path);
+            picker.PickSaveFileAndContinue();
+#else
+            var target = await picker.PickSaveFileAsync();
+            await Continue(FilePickTargets.Attachments, file, target);
+#endif
+        }
+
+        private async Task Continue(FilePickTargets target,
+            IStorageFile read, IStorageFile write = null)
         {
             switch (target)
             {
                 case FilePickTargets.Databases:
-                    await _registration.RegisterAsync(file);
+                    await _registration.RegisterAsync(read);
                     break;
 
                 case FilePickTargets.KeyFile:
@@ -90,7 +140,13 @@ namespace SevenPass.Services.Picker
 
                     var viewModel = view.DataContext as PasswordViewModel;
                     if (viewModel != null)
-                        await viewModel.AddKeyFile(file);
+                        await viewModel.AddKeyFile(read);
+                    break;
+
+                case FilePickTargets.Attachments:
+                    CachedFileManager.DeferUpdates(write);
+                    await read.CopyAndReplaceAsync(write);
+                    await CachedFileManager.CompleteUpdatesAsync(write);
                     break;
             }
         }
