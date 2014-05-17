@@ -10,7 +10,7 @@ using SevenPass.ViewModels;
 
 namespace SevenPass.Services.Picker
 {
-    public class FilePickerService : IFilePickerService
+    public sealed class FilePickerService : IFilePickerService
     {
         private readonly IRegisteredDbsService _registration;
         private readonly Frame _rootFrame;

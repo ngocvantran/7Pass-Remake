@@ -4,7 +4,7 @@ using System.Xml.Linq;
 
 namespace SevenPass.Models
 {
-    public class EntryItemModel : ItemModelBase
+    public sealed class EntryItemModel : ItemModelBase
     {
         /// <summary>
         /// Gets or sets the password.

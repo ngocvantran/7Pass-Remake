@@ -1,11 +1,10 @@
 ﻿using System;
 
-
 namespace SevenPass.Entry.Views
 {
-    public sealed partial class EntryNotesView
+    public sealed partial class EntryFieldView
     {
-        public EntryNotesView()
+        public EntryFieldView()
         {
             InitializeComponent();
         }

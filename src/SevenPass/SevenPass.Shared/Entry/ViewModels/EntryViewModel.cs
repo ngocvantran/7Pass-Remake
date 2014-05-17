@@ -6,7 +6,7 @@ using SevenPass.Services.Cache;
 
 namespace SevenPass.Entry.ViewModels
 {
-    public class EntryViewModel : Conductor<IEntrySubViewModel>.Collection.OneActive
+    public sealed class EntryViewModel : Screen
     {
         private readonly ICacheService _cache;
         private readonly IEventAggregator _events;
@@ -32,6 +32,14 @@ namespace SevenPass.Entry.ViewModels
         /// </summary>
         public string Id { get; set; }
 
+        /// <summary>
+        /// Gets the items.
+        /// </summary>
+        public IEntrySubViewModel[] Items
+        {
+            get { return _views; }
+        }
+
         public EntryViewModel(ICacheService cache,
             IEventAggregator events, IEnumerable<IEntrySubViewModel> views)
         {
@@ -46,7 +54,6 @@ namespace SevenPass.Entry.ViewModels
 
         protected override void OnInitialize()
         {
-            Items.AddRange(_views);
             _views.Apply(_events.Subscribe);
             DatabaseName = _cache.Database.Name;
 

@@ -11,7 +11,7 @@ namespace SevenPass.ViewModels
     /// <summary>
     /// ViewModel to display database data.
     /// </summary>
-    public class GroupViewModel : Screen
+    public sealed class GroupViewModel : Screen
     {
         private readonly ICacheService _cache;
         private readonly BindableCollection<object> _items;
@@ -82,19 +82,18 @@ namespace SevenPass.ViewModels
 
                 // TODO: handle group not found
                 var group = new GroupItemModel(element);
-                base.DisplayName = group.Name;
+                DisplayName = group.Name;
 
                 var groups = group
                     .ListGroups()
-                    .Select(x => new GroupItemViewModel(x))
-                    .Cast<object>();
+                    .Select(x => new GroupItemViewModel(x));
 
                 var entries = group
                     .ListEntries()
-                    .Select(x => new EntryItemViewModel(x))
-                    .Cast<object>();
+                    .Select(x => new EntryItemViewModel(x));
 
-                _items.AddRange(groups.Concat(entries));
+                _items.AddRange(groups
+                    .Concat<object>(entries));
             });
         }
 

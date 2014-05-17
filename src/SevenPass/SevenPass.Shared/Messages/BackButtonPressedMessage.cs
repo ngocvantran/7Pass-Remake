@@ -2,7 +2,7 @@
 
 namespace SevenPass.Messages
 {
-    public class BackButtonPressedMessage
+    public sealed class BackButtonPressedMessage
     {
         /// <summary>
         /// Gets or sets value indicating whether the message has been handled.

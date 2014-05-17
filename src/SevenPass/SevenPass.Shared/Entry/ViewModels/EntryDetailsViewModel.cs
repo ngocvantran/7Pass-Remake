@@ -4,7 +4,7 @@ using System.Xml.Linq;
 
 namespace SevenPass.Entry.ViewModels
 {
-    public class EntryDetailsViewModel : EntrySubViewModelBase
+    public sealed class EntryDetailsViewModel : EntrySubViewModelBase
     {
         private string _password;
         private string _title;
@@ -65,7 +65,7 @@ namespace SevenPass.Entry.ViewModels
 
         public EntryDetailsViewModel()
         {
-            base.DisplayName = "Details";
+            DisplayName = "Details";
         }
 
         protected override void Populate(XElement element)

@@ -7,18 +7,21 @@ using Xunit;
 namespace SevenPass.Tests.ViewModels.Entry
 {
     public abstract class EntrySubViewTestsBase<T>
-        where T : EntrySubViewModelBase, new()
+        where T : EntrySubViewModelBase
     {
         protected readonly XElement Element;
         protected readonly T ViewModel;
 
         protected EntrySubViewTestsBase(XElement element)
+            : this(element, Activator.CreateInstance<T>) {}
+
+        protected EntrySubViewTestsBase(XElement element, Func<T> create)
         {
             if (element == null)
                 throw new ArgumentNullException("element");
 
             Element = element;
-            ViewModel = new T();
+            ViewModel = create();
         }
 
         [Fact]

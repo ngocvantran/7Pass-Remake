@@ -3,11 +3,11 @@ using System.Xml.Linq;
 
 namespace SevenPass.Entry.ViewModels
 {
-    public class EntryAttachmentsViewModel : EntrySubViewModelBase
+    public sealed class EntryAttachmentsViewModel : EntrySubViewModelBase
     {
         public EntryAttachmentsViewModel()
         {
-            base.DisplayName = "Attachments";
+            DisplayName = "Attachments";
         }
 
         protected override void Populate(XElement element) {}

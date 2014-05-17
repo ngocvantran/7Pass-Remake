@@ -2,7 +2,7 @@
 
 namespace SevenPass.Messages
 {
-    public class CachedFileAccessMessage
+    public sealed class CachedFileAccessMessage
     {
         /// <summary>
         /// Gets or sets the database filename.

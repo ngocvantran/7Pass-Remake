@@ -4,7 +4,7 @@ using SevenPass.IO.Models;
 
 namespace SevenPass.Services.Cache
 {
-    public class CachedDatabase
+    public sealed class CachedDatabase
     {
         /// <summary>
         /// Gets or sets the parsed document.

@@ -13,7 +13,7 @@ using SevenPass.Messages;
 
 namespace SevenPass.Services.Databases
 {
-    public class RegisteredDbsService : IRegisteredDbsService
+    public sealed class RegisteredDbsService : IRegisteredDbsService
     {
         private readonly StorageItemAccessList _accessList;
         private readonly IAsyncOperation<StorageFolder> _cacheFolder;

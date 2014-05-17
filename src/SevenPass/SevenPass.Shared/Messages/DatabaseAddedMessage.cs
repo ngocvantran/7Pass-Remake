@@ -3,7 +3,7 @@ using SevenPass.Services.Databases;
 
 namespace SevenPass.Messages
 {
-    public class DatabaseRegistrationMessage
+    public sealed class DatabaseRegistrationMessage
     {
         /// <summary>
         /// Gets or sets the registration action.

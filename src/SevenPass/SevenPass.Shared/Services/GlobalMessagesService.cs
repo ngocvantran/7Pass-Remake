@@ -8,7 +8,7 @@ using SevenPass.Messages;
 
 namespace SevenPass.Services
 {
-    public class GlobalMessagesService : IHandleWithTask<DatabaseSupportMessage>,
+    public sealed class GlobalMessagesService : IHandleWithTask<DatabaseSupportMessage>,
         IHandleWithTask<DuplicateDatabaseMessage>,
         IHandle<CachedFileAccessMessage>
     {

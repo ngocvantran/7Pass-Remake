@@ -4,7 +4,7 @@ using System.Xml.Linq;
 
 namespace SevenPass.Services.Cache
 {
-    public class CacheService : ICacheService
+    public sealed class CacheService : ICacheService
     {
         private ILookup<string, XElement> _entries;
         private ILookup<string, XElement> _groups;

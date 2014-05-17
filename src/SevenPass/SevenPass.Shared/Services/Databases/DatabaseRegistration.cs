@@ -2,7 +2,7 @@
 
 namespace SevenPass.Services.Databases
 {
-    public class DatabaseRegistration
+    public sealed class DatabaseRegistration
     {
         /// <summary>
         /// Gets or sets the database ID.

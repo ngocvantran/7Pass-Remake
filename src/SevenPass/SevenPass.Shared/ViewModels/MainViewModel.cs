@@ -12,7 +12,7 @@ namespace SevenPass.ViewModels
     /// <summary>
     /// Main ViewModel when app is launched, display a list of registered database.
     /// </summary>
-    public class MainViewModel : Screen,
+    public sealed class MainViewModel : Screen,
         IHandle<DatabaseRegistrationMessage>
     {
         private readonly BindableCollection<DatabaseItemViewModel> _databases;

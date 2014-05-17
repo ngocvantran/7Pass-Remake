@@ -18,7 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ContainerExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entry\ViewModels\EntryAttachmentsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entry\ViewModels\EntryDetailsViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Entry\ViewModels\EntryFieldItemViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entry\ViewModels\EntryFieldViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entry\ViewModels\EntryFieldsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entry\ViewModels\EntryNotesViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entry\ViewModels\EntrySubViewModelBase.cs" />

@@ -5,7 +5,7 @@ using System.Xml.Linq;
 
 namespace SevenPass.Models
 {
-    public class GroupItemModel : ItemModelBase
+    public sealed class GroupItemModel : ItemModelBase
     {
         private readonly XElement _element;
 

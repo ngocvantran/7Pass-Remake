@@ -6,16 +6,16 @@ using SevenPass.Messages;
 
 namespace SevenPass.Entry.ViewModels
 {
-    public class EntryFieldsViewModel : EntrySubViewModelBase,
+    public sealed class EntryFieldsViewModel : EntrySubViewModelBase,
         IHandle<EntryFieldExpandedMessage>
     {
         private readonly IEventAggregator _events;
-        private readonly BindableCollection<EntryFieldItemViewModel> _items;
+        private readonly BindableCollection<EntryFieldViewModel> _items;
 
         /// <summary>
         /// Gets the field items.
         /// </summary>
-        public IObservableCollection<EntryFieldItemViewModel> Items
+        public IObservableCollection<EntryFieldViewModel> Items
         {
             get { return _items; }
         }
@@ -26,8 +26,8 @@ namespace SevenPass.Entry.ViewModels
                 throw new ArgumentNullException("events");
 
             _events = events;
-            _items = new BindableCollection<EntryFieldItemViewModel>();
-            base.DisplayName = "Fields";
+            _items = new BindableCollection<EntryFieldViewModel>();
+            DisplayName = "Fields";
         }
 
         public void Handle(EntryFieldExpandedMessage message)
@@ -52,7 +52,7 @@ namespace SevenPass.Entry.ViewModels
                     Value = x.Element("Value"),
                 })
                 .Where(x => !IsStandardField(x.Key))
-                .Select(x => new EntryFieldItemViewModel(this, _events)
+                .Select(x => new EntryFieldViewModel(this, _events)
                 {
                     Key = x.Key,
                     Value = (string)x.Value,

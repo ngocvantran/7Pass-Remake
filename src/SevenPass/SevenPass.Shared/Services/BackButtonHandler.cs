@@ -8,7 +8,7 @@ using SevenPass.Messages;
 
 namespace SevenPass.Services
 {
-    public class BackButtonHandler
+    public sealed class BackButtonHandler
     {
         private readonly IEventAggregator _events;
         private readonly INavigationService _navigation;

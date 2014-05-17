@@ -6,7 +6,7 @@ namespace SevenPass.ViewModels
     /// <summary>
     /// ViewModel to display database details in a list.
     /// </summary>
-    public class DatabaseItemViewModel
+    public sealed class DatabaseItemViewModel
     {
         /// <summary>
         /// Gets or sets the database ID.

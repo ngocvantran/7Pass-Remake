@@ -13,7 +13,7 @@ using SevenPass.Services.Picker;
 
 namespace SevenPass.ViewModels
 {
-    public class PasswordViewModel : Screen
+    public sealed class PasswordViewModel : Screen
     {
         private readonly ICacheService _cache;
         private readonly IEventAggregator _events;

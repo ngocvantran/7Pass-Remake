@@ -3,7 +3,7 @@ using SevenPass.IO.Models;
 
 namespace SevenPass.Messages
 {
-    public class DatabaseSupportMessage
+    public sealed class DatabaseSupportMessage
     {
         /// <summary>
         /// Gets or sets the database file name.

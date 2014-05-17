@@ -2,7 +2,7 @@
 
 namespace SevenPass.Services.Databases
 {
-    public class DatabaseMetaData
+    public sealed class DatabaseMetaData
     {
         /// <summary>
         /// Gets or sets the database name.

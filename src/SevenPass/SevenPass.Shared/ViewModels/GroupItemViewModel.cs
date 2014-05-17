@@ -3,7 +3,7 @@ using SevenPass.Models;
 
 namespace SevenPass.ViewModels
 {
-    public class GroupItemViewModel
+    public sealed class GroupItemViewModel
     {
         private readonly GroupItemModel _group;
 

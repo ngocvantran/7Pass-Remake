@@ -5,7 +5,7 @@ using SevenPass.Messages;
 
 namespace SevenPass.Entry.ViewModels
 {
-    public class EntryFieldItemViewModel : PropertyChangedBase,
+    public sealed class EntryFieldViewModel : PropertyChangedBase,
         IHandle<BackButtonPressedMessage>
     {
         private readonly IEventAggregator _events;
@@ -129,7 +129,7 @@ namespace SevenPass.Entry.ViewModels
             }
         }
 
-        public EntryFieldItemViewModel(IActivate parent,
+        public EntryFieldViewModel(IActivate parent,
             IEventAggregator events)
         {
             if (parent == null) throw new ArgumentNullException("parent");

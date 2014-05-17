@@ -3,19 +3,19 @@ using SevenPass.Entry.ViewModels;
 
 namespace SevenPass.Messages
 {
-    public class EntryFieldExpandedMessage
+    public sealed class EntryFieldExpandedMessage
     {
-        private readonly EntryFieldItemViewModel _item;
+        private readonly EntryFieldViewModel _item;
 
         /// <summary>
         /// Gets the item that was expanded.
         /// </summary>
-        public EntryFieldItemViewModel Item
+        public EntryFieldViewModel Item
         {
             get { return _item; }
         }
 
-        public EntryFieldExpandedMessage(EntryFieldItemViewModel item)
+        public EntryFieldExpandedMessage(EntryFieldViewModel item)
         {
             if (item == null)
                 throw new ArgumentNullException("item");

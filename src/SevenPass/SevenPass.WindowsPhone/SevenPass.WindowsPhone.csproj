@@ -88,8 +88,8 @@
     <Compile Include="Entry\Views\EntryDetailsView.xaml.cs">
       <DependentUpon>EntryDetailsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Entry\Views\EntryFieldItemView.xaml.cs">
-      <DependentUpon>EntryFieldItemView.xaml</DependentUpon>
+    <Compile Include="Entry\Views\EntryFieldView.xaml.cs">
+      <DependentUpon>EntryFieldView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Entry\Views\EntryFieldsView.xaml.cs">
       <DependentUpon>EntryFieldsView.xaml</DependentUpon>
@@ -173,7 +173,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Entry\Views\EntryFieldItemView.xaml">
+    <Page Include="Entry\Views\EntryFieldView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
