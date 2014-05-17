@@ -35,11 +35,11 @@
 
     <FlyoutBase.AttachedFlyout>
         <MenuFlyout>
-            <MenuFlyoutItem Text="pin" cal:Message.Attach="Pin"
+            <MenuFlyoutItem Text="pin to start" cal:Message.Attach="Pin"
                 Visibility="{Binding PinVisibility}" />
-            <MenuFlyoutItem Text="unpin" cal:Message.Attach="Unpin"
+            <MenuFlyoutItem Text="unpin from start" cal:Message.Attach="Unpin"
                 Visibility="{Binding UnpinVisibility}" />
-            <MenuFlyoutItem Text="delete" cal:Message.Attach="Delete" />
+            <MenuFlyoutItem Text="remove" cal:Message.Attach="Delete" />
         </MenuFlyout>
     </FlyoutBase.AttachedFlyout>
 </UserControl>

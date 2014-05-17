@@ -137,6 +137,7 @@ namespace SevenPass.Entry.ViewModels
 
             _parent = parent;
             _events = events;
+            _events.Subscribe(this);
         }
 
         /// <summary>

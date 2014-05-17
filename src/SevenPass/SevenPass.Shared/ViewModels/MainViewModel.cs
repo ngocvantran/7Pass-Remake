@@ -17,6 +17,7 @@ namespace SevenPass.ViewModels
         IHandle<DatabaseRegistrationMessage>
     {
         private readonly BindableCollection<DatabaseItemViewModel> _databases;
+        private readonly IEventAggregator _events;
         private readonly IMappingEngine _maps;
         private readonly INavigationService _navigation;
         private readonly IFilePickerService _picker;
@@ -49,15 +50,17 @@ namespace SevenPass.ViewModels
 
         public MainViewModel(INavigationService navigation,
             IRegisteredDbsService register, IMappingEngine maps,
-            IFilePickerService picker)
+            IFilePickerService picker, IEventAggregator events)
         {
             if (navigation == null) throw new ArgumentNullException("navigation");
             if (register == null) throw new ArgumentNullException("register");
             if (maps == null) throw new ArgumentNullException("maps");
             if (picker == null) throw new ArgumentNullException("picker");
+            if (events == null) throw new ArgumentNullException("events");
 
             _maps = maps;
             _picker = picker;
+            _events = events;
             _register = register;
             _navigation = navigation;
             _databases = new BindableCollection<DatabaseItemViewModel>();
@@ -65,14 +68,12 @@ namespace SevenPass.ViewModels
 
         public void Handle(DatabaseRegistrationMessage message)
         {
-            var registration = message.Registration;
-
             switch (message.Action)
             {
                 case DatabaseRegistrationActions.Updated:
                 case DatabaseRegistrationActions.Removed:
                     var existing = _databases.FirstOrDefault(
-                        x => x.Id == registration.Id);
+                        x => x.Id == message.Id);
 
                     if (existing != null)
                         _databases.Remove(existing);
@@ -84,7 +85,7 @@ namespace SevenPass.ViewModels
             {
                 case DatabaseRegistrationActions.Added:
                 case DatabaseRegistrationActions.Updated:
-                    _databases.Add(Map(registration));
+                    _databases.Add(Map(message.Registration));
                     break;
             }
         }
@@ -111,7 +112,7 @@ namespace SevenPass.ViewModels
             }
         }
 
-        protected override async void OnInitialize()
+        protected override void OnInitialize()
         {
             _databases.Clear();
 
@@ -125,8 +126,8 @@ namespace SevenPass.ViewModels
 
         private DatabaseItemViewModel Map(DatabaseRegistration registration)
         {
-            return _maps.Map<DatabaseRegistration,
-                DatabaseItemViewModel>(registration);
+            return _maps.Map(registration,
+                new DatabaseItemViewModel(_events));
         }
 
         /// <summary>

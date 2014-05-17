@@ -87,8 +87,6 @@ namespace SevenPass.Entry.ViewModels
                     IsProtected = IsProtected(x.Value),
                 }));
 
-            Items.Apply(_events.Subscribe);
-
             ListVisibility = Items.Any()
                 ? Visibility.Visible
                 : Visibility.Collapsed;

@@ -30,6 +30,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseAddedMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseRegistrationActions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseSupportMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\DeleteDatabaseMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\DuplicateDatabaseMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\EntryFieldExpandedMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\EntryItemModel.cs" />

@@ -11,7 +11,6 @@ namespace SevenPass.Entry.ViewModels
     {
         private readonly ICacheService _cache;
         private readonly BindableCollection<AppBarCommandViewModel> _commands;
-        private readonly IEventAggregator _events;
         private readonly IEntrySubViewModel[] _views;
 
         private string _databaseName;
@@ -51,14 +50,12 @@ namespace SevenPass.Entry.ViewModels
         }
 
         public EntryViewModel(ICacheService cache,
-            IEventAggregator events, IEnumerable<IEntrySubViewModel> views)
+            IEnumerable<IEntrySubViewModel> views)
         {
             if (cache == null) throw new ArgumentNullException("cache");
-            if (events == null) throw new ArgumentNullException("events");
             if (views == null) throw new ArgumentNullException("views");
 
             _cache = cache;
-            _events = events;
             _views = views.ToArray();
 
             _commands = new BindableCollection<AppBarCommandViewModel>(
@@ -67,7 +64,6 @@ namespace SevenPass.Entry.ViewModels
 
         protected override void OnInitialize()
         {
-            _views.Apply(_events.Subscribe);
             DatabaseName = _cache.Database.Name;
 
             var entry = _cache.GetEntry(Id);

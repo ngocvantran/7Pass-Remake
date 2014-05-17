@@ -1,7 +1,9 @@
 ﻿using System;
+using Windows.UI.Popups;
 using Windows.UI.StartScreen;
 using Windows.UI.Xaml;
 using Caliburn.Micro;
+using SevenPass.Messages;
 
 namespace SevenPass.ViewModels
 {
@@ -10,6 +12,7 @@ namespace SevenPass.ViewModels
     /// </summary>
     public sealed class DatabaseItemViewModel : PropertyChangedBase
     {
+        private readonly IEventAggregator _events;
         private SecondaryTile _tile;
 
         /// <summary>
@@ -49,6 +52,14 @@ namespace SevenPass.ViewModels
             }
         }
 
+        public DatabaseItemViewModel(IEventAggregator events)
+        {
+            if (events == null)
+                throw new ArgumentNullException("events");
+            
+            _events = events;
+        }
+
         /// <summary>
         /// Gets the tile ID for the database.
         /// </summary>
@@ -70,7 +81,26 @@ namespace SevenPass.ViewModels
             }
         }
 
-        public void Delete() {}
+        public async void Delete()
+        {
+            var msg = new MessageDialog(Name + " will be removed from 7Pass. " +
+                "This do not delete the actual database file.")
+            {
+                Title = "Remove this database?",
+                Commands =
+                {
+                    new UICommand("yes", _ => _events
+                        .PublishOnBackgroundThread(new DeleteDatabaseMessage
+                        {
+                            Id = Id,
+                            Tile = _tile,
+                        })),
+                    new UICommand("no"),
+                }
+            };
+
+            await msg.ShowAsync();
+        }
 
         public async void Pin()
         {

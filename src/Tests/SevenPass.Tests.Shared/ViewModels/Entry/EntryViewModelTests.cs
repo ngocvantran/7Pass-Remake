@@ -21,7 +21,7 @@ namespace SevenPass.Tests.ViewModels.Entry
             _subModel = new MockEntrySubViewModel();
 
             _viewModel = new EntryViewModel(
-                new MockCacheService(_entry), new EventAggregator(),
+                new MockCacheService(_entry),
                 new IEntrySubViewModel[] {_subModel})
             {
                 Id = MockCacheService.ID,

@@ -13,7 +13,8 @@ using SevenPass.Messages;
 
 namespace SevenPass.Services.Databases
 {
-    public sealed class RegisteredDbsService : IRegisteredDbsService
+    public sealed class RegisteredDbsService : IRegisteredDbsService,
+        IHandleWithTask<DeleteDatabaseMessage>
     {
         private readonly StorageItemAccessList _accessList;
         private readonly IAsyncOperation<StorageFolder> _cacheFolder;
@@ -30,6 +31,28 @@ namespace SevenPass.Services.Databases
             var localFolder = ApplicationData.Current.LocalFolder;
             _cacheFolder = localFolder.CreateFolderAsync(
                 "Databases", CreationCollisionOption.OpenIfExists);
+        }
+
+        public async Task Handle(DeleteDatabaseMessage message)
+        {
+            var tile = message.Tile;
+            if (tile != null)
+            {
+                if (!await tile.RequestDeleteAsync())
+                    return;
+            }
+
+            _accessList.Remove(message.Id);
+
+            var cache = await GetCachedFile(message.Id);
+            await cache.DeleteAsync();
+
+            _events.PublishOnCurrentThread(
+                new DatabaseRegistrationMessage
+                {
+                    Id = message.Id,
+                    Action = DatabaseRegistrationActions.Removed,
+                });
         }
 
         /// <summary>
@@ -111,6 +134,7 @@ namespace SevenPass.Services.Databases
             await _events.PublishOnUIThreadAsync(
                 new DatabaseRegistrationMessage
                 {
+                    Id = info.Id,
                     Registration = info,
                     Action = DatabaseRegistrationActions.Added,
                 });

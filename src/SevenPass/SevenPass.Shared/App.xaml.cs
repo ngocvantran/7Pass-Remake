@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -41,14 +40,12 @@ namespace SevenPass
 
         protected override IEnumerable<object> GetAllInstances(Type service)
         {
-            return _container
-                .GetAllInstances(service)
-                .Select(TryRegister);
+            return _container.GetAllInstances(service);
         }
 
         protected override object GetInstance(Type service, string key)
         {
-            return TryRegister(_container.GetInstance(service, key));
+            return _container.GetInstance(service, key);
         }
 
         protected override void OnActivated(IActivatedEventArgs args)
@@ -92,6 +89,7 @@ namespace SevenPass
         private void RegisterServices()
         {
             _container = new WinRTContainer();
+            _container.Activated += TryRegister;
             _container.RegisterWinRTServices();
 
             _container
@@ -113,13 +111,11 @@ namespace SevenPass
             _container.PerRequest<IEntrySubViewModel, EntryFieldsViewModel>();
         }
 
-        private object TryRegister(object instance)
+        private void TryRegister(object instance)
         {
             var handler = instance as IHandle;
             if (handler != null)
                 _events.Subscribe(instance);
-
-            return instance;
         }
     }
 }
