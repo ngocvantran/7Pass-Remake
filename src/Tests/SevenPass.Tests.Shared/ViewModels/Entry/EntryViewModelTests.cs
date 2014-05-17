@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
 using Caliburn.Micro;
 using SevenPass.Entry.ViewModels;
 using SevenPass.Services.Cache;
+using SevenPass.ViewModels;
 using Xunit;
 
 namespace SevenPass.Tests.ViewModels.Entry
@@ -89,6 +91,11 @@ namespace SevenPass.Tests.ViewModels.Entry
             public string DisplayName { get; set; }
 
             public XElement Element { get; set; }
+
+            public IEnumerable<AppBarCommandViewModel> GetCommands()
+            {
+                yield break;
+            }
 
             public void Loads(XElement element)
             {

@@ -1,12 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
 using Caliburn.Micro;
+using SevenPass.ViewModels;
 
 namespace SevenPass.Entry.ViewModels
 {
     public abstract class EntrySubViewModelBase : Screen, IEntrySubViewModel
     {
         private XElement _entry;
+
+        public virtual IEnumerable<AppBarCommandViewModel> GetCommands()
+        {
+            yield break;
+        }
 
         public virtual void Loads(XElement element)
         {

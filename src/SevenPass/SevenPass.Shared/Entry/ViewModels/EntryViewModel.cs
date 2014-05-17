@@ -3,16 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro;
 using SevenPass.Services.Cache;
+using SevenPass.ViewModels;
 
 namespace SevenPass.Entry.ViewModels
 {
     public sealed class EntryViewModel : Screen
     {
         private readonly ICacheService _cache;
+        private readonly BindableCollection<AppBarCommandViewModel> _commands;
         private readonly IEventAggregator _events;
         private readonly IEntrySubViewModel[] _views;
 
         private string _databaseName;
+
+        /// <summary>
+        /// Gets the app bar commands.
+        /// </summary>
+        public IObservableCollection<AppBarCommandViewModel> Commands
+        {
+            get { return _commands; }
+        }
 
         /// <summary>
         /// Gets or sets the database name.
@@ -50,6 +60,9 @@ namespace SevenPass.Entry.ViewModels
             _cache = cache;
             _events = events;
             _views = views.ToArray();
+
+            _commands = new BindableCollection<AppBarCommandViewModel>(
+                _views.SelectMany(x => x.GetCommands()));
         }
 
         protected override void OnInitialize()

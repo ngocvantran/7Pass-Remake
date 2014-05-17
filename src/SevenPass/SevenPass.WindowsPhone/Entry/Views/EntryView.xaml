@@ -48,4 +48,8 @@
             </DataTemplate>
         </Hub.HeaderTemplate>
     </Hub>
+    
+    <Page.BottomAppBar>
+        <CommandBar views:AppBarBinder.Commands="{Binding Commands}" />
+    </Page.BottomAppBar>
 </Page>

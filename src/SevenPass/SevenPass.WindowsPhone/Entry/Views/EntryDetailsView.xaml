@@ -9,8 +9,7 @@
     d:DesignWidth="400">
 
     <StackPanel>
-        <TextBox Name="Title" Header="Title"
-            ContinuumNavigationTransitionInfo.IsEntranceElement="True" />
+        <TextBox Name="Title" Header="Title" />
         <TextBox Name="UserName" Header="User name" />
         <PasswordBox Name="Password" Header="Password"
             IsPasswordRevealButtonEnabled="True" />

@@ -50,12 +50,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\Picker\FilePickerService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Picker\FilePickTargets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Picker\IFilePickerService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\AppBarCommandViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DatabaseItemViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\GroupViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\EntryItemViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\GroupItemViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\PasswordViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\AppBarBinder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\HubBinder.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -21,14 +21,16 @@ namespace SevenPass.Views
                 new PropertyMetadata(null));
 
         public static readonly DependencyProperty DataSourceProperty = DependencyProperty.RegisterAttached(
-            "DataSource", typeof(object), typeof(HubBinder), new PropertyMetadata(null, DataSourceChanged));
+            "DataSource", typeof(object), typeof(HubBinder),
+            new PropertyMetadata(null, OnDataSourceChanged));
 
         public static readonly DependencyProperty HeaderTemplateProperty = DependencyProperty.RegisterAttached(
-            "HeaderTemplate", typeof(DataTemplate), typeof(HubBinder), new PropertyMetadata(null, HeaderTemplateChanged));
+            "HeaderTemplate", typeof(DataTemplate), typeof(HubBinder),
+            new PropertyMetadata(null, OnHeaderTemplateChanged));
 
         public static readonly DependencyProperty SectionTemplateProperty = DependencyProperty.RegisterAttached(
             "SectionTemplate", typeof(DataTemplate), typeof(HubBinder),
-            new PropertyMetadata(null, SectionTemplateChanged));
+            new PropertyMetadata(null, OnSectionTemplateChanged));
 
         public static object GetDataSource(UIElement element)
         {
@@ -60,7 +62,7 @@ namespace SevenPass.Views
             element.SetValue(SectionTemplateProperty, value);
         }
 
-        private static void DataSourceChanged(DependencyObject d,
+        private static void OnDataSourceChanged(DependencyObject d,
             DependencyPropertyChangedEventArgs e)
         {
             var hub = d as Hub;
@@ -81,7 +83,7 @@ namespace SevenPass.Views
             binder.Apply();
         }
 
-        private static void HeaderTemplateChanged(DependencyObject d,
+        private static void OnHeaderTemplateChanged(DependencyObject d,
             DependencyPropertyChangedEventArgs e)
         {
             var hub = d as Hub;
@@ -96,7 +98,7 @@ namespace SevenPass.Views
                 hubSection.HeaderTemplate = template;
         }
 
-        private static void SectionTemplateChanged(DependencyObject d,
+        private static void OnSectionTemplateChanged(DependencyObject d,
             DependencyPropertyChangedEventArgs e)
         {
             var hub = d as Hub;
@@ -161,14 +163,12 @@ namespace SevenPass.Views
 
             private void UpdateActiveState()
             {
-                var actives = _hub.SectionsInView.ToList();
-
-                actives
-                    .Select(x => x.DataContext)
-                    .Apply(ScreenExtensions.TryActivate);
+                var active = _hub.SectionsInView.FirstOrDefault();
+                if (active != null && active.DataContext != null)
+                    ScreenExtensions.TryActivate(active.DataContext);
 
                 _hub.Sections
-                    .Except(actives)
+                    .Except(new[] {active})
                     .Select(x => x.DataContext)
                     .Apply(x => ScreenExtensions.TryDeactivate(x, false));
             }
