@@ -6,8 +6,6 @@ using SevenPass.Messages;
 
 namespace SevenPass.Entry.ViewModels
 {
-    // TODO: collapse selected item on Back button press
-
     public class EntryFieldsViewModel : EntrySubViewModelBase,
         IHandle<EntryFieldExpandedMessage>
     {
@@ -54,12 +52,14 @@ namespace SevenPass.Entry.ViewModels
                     Value = x.Element("Value"),
                 })
                 .Where(x => !IsStandardField(x.Key))
-                .Select(x => new EntryFieldItemViewModel(_events)
+                .Select(x => new EntryFieldItemViewModel(this, _events)
                 {
                     Key = x.Key,
                     Value = (string)x.Value,
                     IsProtected = IsProtected(x.Value),
                 }));
+
+            Items.Apply(_events.Subscribe);
         }
 
         private static bool IsProtected(XElement element)

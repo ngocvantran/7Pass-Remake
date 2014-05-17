@@ -5,9 +5,11 @@ using SevenPass.Messages;
 
 namespace SevenPass.Entry.ViewModels
 {
-    public class EntryFieldItemViewModel : PropertyChangedBase
+    public class EntryFieldItemViewModel : PropertyChangedBase,
+        IHandle<BackButtonPressedMessage>
     {
         private readonly IEventAggregator _events;
+        private readonly IActivate _parent;
         private bool _isExpanded;
         private bool _isProtected;
         private string _key;
@@ -127,11 +129,13 @@ namespace SevenPass.Entry.ViewModels
             }
         }
 
-        public EntryFieldItemViewModel(IEventAggregator events)
+        public EntryFieldItemViewModel(IActivate parent,
+            IEventAggregator events)
         {
-            if (events == null)
-                throw new ArgumentNullException("events");
+            if (parent == null) throw new ArgumentNullException("parent");
+            if (events == null) throw new ArgumentNullException("events");
 
+            _parent = parent;
             _events = events;
         }
 
@@ -141,6 +145,15 @@ namespace SevenPass.Entry.ViewModels
         public void Expand()
         {
             IsExpanded = true;
+        }
+
+        public void Handle(BackButtonPressedMessage message)
+        {
+            if (!_parent.IsActive || !IsExpanded)
+                return;
+
+            IsExpanded = false;
+            message.IsHandled = true;
         }
     }
 }

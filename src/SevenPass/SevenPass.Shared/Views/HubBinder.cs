@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Linq;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -147,7 +148,7 @@ namespace SevenPass.Views
                     });
                 }
 
-                ActivateItems();
+                UpdateActiveState();
             }
 
             public void Dispose()
@@ -158,10 +159,18 @@ namespace SevenPass.Views
                 _hub.SectionsInViewChanged -= OnSectionsInViewChanged;
             }
 
-            private void ActivateItems()
+            private void UpdateActiveState()
             {
-                foreach (var section in _hub.SectionsInView)
-                    ScreenExtensions.TryActivate(section.DataContext);
+                var actives = _hub.SectionsInView.ToList();
+
+                actives
+                    .Select(x => x.DataContext)
+                    .Apply(ScreenExtensions.TryActivate);
+
+                _hub.Sections
+                    .Except(actives)
+                    .Select(x => x.DataContext)
+                    .Apply(x => ScreenExtensions.TryDeactivate(x, false));
             }
 
             private void OnCollectionChanged(object sender,
@@ -174,7 +183,7 @@ namespace SevenPass.Views
             private void OnSectionsInViewChanged(object sender,
                 SectionsInViewChangedEventArgs e)
             {
-                ActivateItems();
+                UpdateActiveState();
             }
         }
     }

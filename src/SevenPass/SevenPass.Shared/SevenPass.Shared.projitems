@@ -25,6 +25,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Entry\ViewModels\EntryViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entry\ViewModels\IEntrySubViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExtensionMethods.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\BackButtonPressedMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\CachedFileAccessMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseAddedMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseRegistrationActions.cs" />
@@ -36,6 +37,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\ItemModelBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Resources.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\AutoMaps.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\BackButtonHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Cache\CacheService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Cache\CachedDatabase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Cache\ICacheService.cs" />

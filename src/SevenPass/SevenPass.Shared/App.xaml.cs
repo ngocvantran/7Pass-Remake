@@ -18,7 +18,6 @@ namespace SevenPass
     {
         private WinRTContainer _container;
         private IEventAggregator _events;
-        private INavigationService _navigation;
 
         public App()
         {
@@ -68,32 +67,17 @@ namespace SevenPass
         protected override void PrepareViewFirst(Frame rootFrame)
         {
             _container.Instance(rootFrame);
+            _container.RegisterNavigationService(rootFrame);
             _events = _container.GetInstance<IEventAggregator>();
-            _navigation = _container.RegisterNavigationService(rootFrame);
 
             var messages = new GlobalMessagesService();
             _events.Subscribe(messages);
             _container.Instance(messages);
 
 #if WINDOWS_PHONE_APP
-            EventHandler<Windows.Phone.UI.Input.BackPressedEventArgs> handler = (sender, e) =>
-            {
-                if (!_navigation.CanGoBack)
-                    return;
-
-                e.Handled = true;
-                _navigation.GoBack();
-            };
-
-            rootFrame.Loaded += (sender, args) =>
-            {
-                Windows.Phone.UI.Input.HardwareButtons.BackPressed += handler;
-            };
-
-            rootFrame.Unloaded += (sender, args) =>
-            {
-                Windows.Phone.UI.Input.HardwareButtons.BackPressed -= handler;
-            };
+            _container
+                .GetInstance<BackButtonHandler>()
+                .Initialize();
 #endif
         }
 
@@ -106,6 +90,10 @@ namespace SevenPass
                 .AssemblyContainingType<MainViewModel>()
                 .RegisterViewModels();
 
+#if WINDOWS_PHONE_APP
+            _container.Singleton<BackButtonHandler>();
+#endif
+            
             _container.Instance(AutoMaps.Initialize());
             _container.Singleton<ICacheService, CacheService>();
             _container.Singleton<IFilePickerService, FilePickerService>();

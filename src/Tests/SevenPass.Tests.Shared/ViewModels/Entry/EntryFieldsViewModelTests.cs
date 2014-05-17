@@ -82,9 +82,12 @@ namespace SevenPass.Tests.ViewModels.Entry
         [Fact]
         public void Should_update_IsExpanded_state_of_items()
         {
+            var parent = new Screen();
             var events = new EventAggregator();
-            var item1 = new EntryFieldItemViewModel(events);
-            var item2 = new EntryFieldItemViewModel(events);
+            ScreenExtensions.TryActivate(parent);
+
+            var item1 = new EntryFieldItemViewModel(parent, events);
+            var item2 = new EntryFieldItemViewModel(parent, events);
 
             ViewModel.Items.Add(item1);
             ViewModel.Items.Add(item2);
