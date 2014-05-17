@@ -1,4 +1,6 @@
 ﻿using System;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
 
 namespace SevenPass.Views
 {
@@ -7,6 +9,11 @@ namespace SevenPass.Views
         public DatabaseItemView()
         {
             InitializeComponent();
+        }
+
+        private void OnHolding(object sender, HoldingRoutedEventArgs e)
+        {
+            FlyoutBase.ShowAttachedFlyout(this);
         }
     }
 }

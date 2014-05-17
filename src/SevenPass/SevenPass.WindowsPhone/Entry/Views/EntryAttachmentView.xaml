@@ -11,12 +11,10 @@
 
     <UserControl.Resources>
         <MenuFlyout x:Key="AttachmentActions">
-            <MenuFlyoutItem Text="Open" cal:Message.Attach="Open" />
-            <MenuFlyoutItem Text="Save" cal:Message.Attach="Save" />
-            <MenuFlyoutItem Text="Share" cal:Message.Attach="Share" />
-            
-            <MenuFlyoutSeparator />
-            <MenuFlyoutItem Text="Delete" cal:Message.Attach="Delete" />
+            <MenuFlyoutItem Text="open" cal:Message.Attach="Open" />
+            <MenuFlyoutItem Text="save" cal:Message.Attach="Save" />
+            <MenuFlyoutItem Text="share" cal:Message.Attach="Share" />
+            <MenuFlyoutItem Text="delete" cal:Message.Attach="Delete" />
         </MenuFlyout>
     </UserControl.Resources>
 

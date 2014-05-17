@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Windows.ApplicationModel.Activation;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Caliburn.Micro;
 using SevenPass.Entry.ViewModels;
@@ -61,7 +62,14 @@ namespace SevenPass
 
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
-            DisplayRootView<MainView>();
+            if (args.TileId.StartsWith("DB_"))
+            {
+                DisplayRootView<PasswordView>(args.Arguments);
+                return;
+            }
+
+            if (Window.Current.Content == null)
+                DisplayRootView<MainView>();
         }
 
         protected override void PrepareViewFirst(Frame rootFrame)
@@ -93,7 +101,7 @@ namespace SevenPass
 #if WINDOWS_PHONE_APP
             _container.Singleton<BackButtonHandler>();
 #endif
-            
+
             _container.Instance(AutoMaps.Initialize());
             _container.Singleton<ICacheService, CacheService>();
             _container.Singleton<IFilePickerService, FilePickerService>();

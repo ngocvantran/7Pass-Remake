@@ -25,7 +25,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Entry\ViewModels\EntrySubViewModelBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entry\ViewModels\EntryViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entry\ViewModels\IEntrySubViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ExtensionMethods.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\BackButtonPressedMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\CachedFileAccessMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseAddedMessage.cs" />

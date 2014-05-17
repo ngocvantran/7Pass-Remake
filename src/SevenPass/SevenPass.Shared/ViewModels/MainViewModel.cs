@@ -83,8 +83,7 @@ namespace SevenPass.ViewModels
             {
                 case DatabaseRegistrationActions.Added:
                 case DatabaseRegistrationActions.Updated:
-                    _databases.Add(_maps.Map<DatabaseRegistration,
-                        DatabaseItemViewModel>(registration));
+                    _databases.Add(Map(registration));
                     break;
             }
         }
@@ -104,11 +103,16 @@ namespace SevenPass.ViewModels
 
             var items = _register
                 .List()
-                .Project(_maps)
-                .To<DatabaseItemViewModel>()
+                .Select(Map)
                 .OrderBy(x => x.Name);
 
             _databases.AddRange(items);
+        }
+
+        private DatabaseItemViewModel Map(DatabaseRegistration registration)
+        {
+            return _maps.Map<DatabaseRegistration,
+                DatabaseItemViewModel>(registration);
         }
 
         /// <summary>
