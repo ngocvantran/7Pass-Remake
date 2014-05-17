@@ -9,5 +9,6 @@
     d:DesignWidth="400">
 
     <TextBox Name="Notes" AcceptsReturn="True"
-        VerticalAlignment="Stretch" />
+        VerticalAlignment="Stretch" TextWrapping="Wrap"
+        FontSize="{ThemeResource TextStyleSmallFontSize}" />
 </UserControl>

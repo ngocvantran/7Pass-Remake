@@ -43,7 +43,8 @@
             <DataTemplate>
                 <TextBlock Text="{Binding}"
                     Margin="24,17,0,28" Typography.Capitals="SmallCaps"
-                    Style="{ThemeResource TitleTextBlockStyle}" />
+                    Style="{ThemeResource TitleTextBlockStyle}"
+                    FontSize="{ThemeResource TextStyleExtraLargePlusFontSize}" />
             </DataTemplate>
         </Hub.HeaderTemplate>
     </Hub>

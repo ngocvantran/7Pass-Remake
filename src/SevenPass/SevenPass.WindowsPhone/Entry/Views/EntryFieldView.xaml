@@ -20,9 +20,11 @@
 
             <TextBlock Text="{Binding Value}"
                 Style="{ThemeResource BodyTextBlockStyle}"
+                FontSize="{ThemeResource TextStyleExtraLargeFontSize}"
                 Visibility="{Binding ExposedValueVisibility}" />
             <TextBlock Text="Hidden" FontStyle="Italic"
                 Style="{ThemeResource BodyTextBlockStyle}"
+                FontSize="{ThemeResource TextStyleExtraLargeFontSize}"
                 Visibility="{Binding ProtectedValueVisibility}" />
         </StackPanel>
 
