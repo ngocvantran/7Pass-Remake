@@ -1,39 +1,15 @@
 ﻿using System;
 using System.Linq;
 using System.Xml.Linq;
-using Caliburn.Micro;
-using SevenPass.Services.Cache;
 
-namespace SevenPass.ViewModels
+namespace SevenPass.Entry.ViewModels
 {
-    public class EntryViewModel : Screen
+    public class EntryDetailsViewModel : EntrySubViewModelBase
     {
-        private readonly ICacheService _cache;
-        private string _databaseName;
-
-        private XElement _entry;
         private string _password;
         private string _title;
         private string _url;
         private string _userName;
-
-        /// <summary>
-        /// Gets or sets the database name.
-        /// </summary>
-        public string DatabaseName
-        {
-            get { return _databaseName; }
-            set
-            {
-                _databaseName = value;
-                NotifyOfPropertyChange(() => DatabaseName);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the entry UUID.
-        /// </summary>
-        public string Id { get; set; }
 
         /// <summary>
         /// Gets or sets the password.
@@ -87,22 +63,14 @@ namespace SevenPass.ViewModels
             }
         }
 
-        public EntryViewModel(ICacheService cache)
+        public EntryDetailsViewModel()
         {
-            if (cache == null)
-                throw new ArgumentNullException("cache");
-
-            _cache = cache;
+            base.DisplayName = "Details";
         }
 
-        protected override void OnInitialize()
+        protected override void Populate(XElement element)
         {
-            DatabaseName = _cache.Database.Name;
-
-            _entry = _cache.GetEntry(Id);
-            // TODO: handle entry not found
-
-            var strings = _entry
+            var strings = element
                 .Elements("String")
                 .ToLookup(x => (string)x.Element("Key"),
                     x => (string)x.Element("Value"));

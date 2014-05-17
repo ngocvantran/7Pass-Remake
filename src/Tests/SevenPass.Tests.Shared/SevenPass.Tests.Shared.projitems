@@ -9,12 +9,16 @@
     <Import_RootNamespace>SevenPass.Tests</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ContainerExtensionsTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\EntryItemModelTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GroupItemModelTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\CacheServiceTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestIO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\EntryItemViewModelTests.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\EntryViewModelTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Entry\EntryDetailsViewModelTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Entry\EntryNotesViewModelTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Entry\EntrySubViewTestsBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Entry\EntryViewModelTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\GroupViewModelTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MockNavigationService.cs" />
   </ItemGroup>

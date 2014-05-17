@@ -15,6 +15,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ContainerExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entry\ViewModels\EntryAttachmentsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entry\ViewModels\EntryDetailsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entry\ViewModels\EntryFieldsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entry\ViewModels\EntryNotesViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entry\ViewModels\EntrySubViewModelBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entry\ViewModels\EntryViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entry\ViewModels\IEntrySubViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExtensionMethods.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\CachedFileAccessMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseAddedMessage.cs" />
@@ -38,12 +46,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\Picker\FilePickTargets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Picker\IFilePickerService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DatabaseItemViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\EntryViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\GroupViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\EntryItemViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\GroupItemViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\PasswordViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\HubBinder.cs" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Resources.resw" />

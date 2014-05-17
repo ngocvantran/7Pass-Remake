@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SevenPass.Views
+namespace SevenPass.Entry.Views
 {
     public sealed partial class EntryView
     {

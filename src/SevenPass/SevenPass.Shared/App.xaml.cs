@@ -4,6 +4,7 @@ using System.Linq;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml.Controls;
 using Caliburn.Micro;
+using SevenPass.Entry.ViewModels;
 using SevenPass.Services;
 using SevenPass.Services.Cache;
 using SevenPass.Services.Databases;
@@ -32,20 +33,10 @@ namespace SevenPass
 
         protected override void Configure()
         {
-            LogManager.GetLog = x => new DebugLog(x);
+            if (System.Diagnostics.Debugger.IsAttached)
+                LogManager.GetLog = x => new DebugLog(x);
 
-            _container = new WinRTContainer();
-            _container.RegisterWinRTServices();
-
-            _container.PerRequest<MainViewModel>();
-            _container.PerRequest<GroupViewModel>();
-            _container.PerRequest<EntryViewModel>();
-            _container.PerRequest<PasswordViewModel>();
-
-            _container.Instance(AutoMaps.Initialize());
-            _container.Singleton<ICacheService, CacheService>();
-            _container.Singleton<IFilePickerService, FilePickerService>();
-            _container.Singleton<IRegisteredDbsService, RegisteredDbsService>();
+            RegisterServices();
         }
 
         protected override IEnumerable<object> GetAllInstances(Type service)
@@ -104,6 +95,26 @@ namespace SevenPass
                 Windows.Phone.UI.Input.HardwareButtons.BackPressed -= handler;
             };
 #endif
+        }
+
+        private void RegisterServices()
+        {
+            _container = new WinRTContainer();
+            _container.RegisterWinRTServices();
+
+            _container
+                .AssemblyContainingType<MainViewModel>()
+                .RegisterViewModels();
+
+            _container.Instance(AutoMaps.Initialize());
+            _container.Singleton<ICacheService, CacheService>();
+            _container.Singleton<IFilePickerService, FilePickerService>();
+            _container.Singleton<IRegisteredDbsService, RegisteredDbsService>();
+
+            _container.PerRequest<IEntrySubViewModel, EntryDetailsViewModel>();
+            _container.PerRequest<IEntrySubViewModel, EntryNotesViewModel>();
+            _container.PerRequest<IEntrySubViewModel, EntryAttachmentsViewModel>();
+            _container.PerRequest<IEntrySubViewModel, EntryFieldsViewModel>();
         }
 
         private object TryRegister(object instance)

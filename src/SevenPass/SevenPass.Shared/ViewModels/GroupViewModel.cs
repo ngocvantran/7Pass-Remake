@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using SevenPass.Models;
+using SevenPass.Entry.ViewModels;
 using SevenPass.Services.Cache;
 
 namespace SevenPass.ViewModels

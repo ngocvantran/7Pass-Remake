@@ -5,6 +5,7 @@ using System.Xml.Linq;
 using SevenPass.Models;
 using SevenPass.Services.Cache;
 using SevenPass.ViewModels;
+using SevenPass.Entry.ViewModels;
 using Xunit;
 
 namespace SevenPass.Tests.ViewModels
