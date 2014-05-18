@@ -10,6 +10,11 @@ namespace SevenPass.Entry.ViewModels
     {
         private XElement _entry;
 
+        /// <summary>
+        /// Gets or sets the entry UUID.
+        /// </summary>
+        public string Id { get; set; }
+
         public virtual IEnumerable<AppBarCommandViewModel> GetCommands()
         {
             yield break;

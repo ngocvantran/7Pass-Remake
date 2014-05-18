@@ -10,9 +10,10 @@
 
     <StackPanel>
         <TextBox Name="Title" Header="Title" />
-        <TextBox Name="UserName" Header="User name" />
+        <TextBox Name="UserName" Header="User name"
+            InputScope="EmailSmtpAddress" />
         <PasswordBox Name="Password" Header="Password"
             IsPasswordRevealButtonEnabled="True" />
-        <TextBox Name="Url" Header="URL" />
+        <TextBox Name="Url" Header="URL" InputScope="Url" />
     </StackPanel>
 </UserControl>

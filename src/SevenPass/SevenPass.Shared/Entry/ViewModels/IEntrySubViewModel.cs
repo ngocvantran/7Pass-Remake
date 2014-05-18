@@ -9,6 +9,11 @@ namespace SevenPass.Entry.ViewModels
     public interface IEntrySubViewModel : IHaveDisplayName
     {
         /// <summary>
+        /// Gets or sets the entry UUID.
+        /// </summary>
+        string Id { get; set; }
+
+        /// <summary>
         /// Gets the app bar commands.
         /// </summary>
         /// <returns>The app bar commands.</returns>

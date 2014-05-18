@@ -92,6 +92,8 @@ namespace SevenPass.Tests.ViewModels.Entry
 
             public XElement Element { get; set; }
 
+            public string Id { get; set; }
+
             public IEnumerable<AppBarCommandViewModel> GetCommands()
             {
                 yield break;

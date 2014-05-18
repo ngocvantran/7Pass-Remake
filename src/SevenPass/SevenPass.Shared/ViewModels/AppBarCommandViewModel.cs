@@ -82,6 +82,7 @@ namespace SevenPass.ViewModels
         protected AppBarCommandViewModel()
         {
             _isPrimary = true;
+            _isEnabled = true;
             _visibility = Visibility.Collapsed;
         }
 

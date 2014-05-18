@@ -74,7 +74,10 @@ namespace SevenPass.Entry.ViewModels
             }
 
             foreach (var view in _views)
+            {
+                view.Id = Id;
                 view.Loads(entry);
+            }
         }
     }
 }

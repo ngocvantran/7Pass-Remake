@@ -16,6 +16,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)ContainerExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entry\ViewModels\BrowserViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entry\ViewModels\EntryAttachmentsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entry\ViewModels\EntryAttachmentViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entry\ViewModels\EntryDetailsViewModel.cs" />

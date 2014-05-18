@@ -1,0 +1,45 @@
+﻿<Page
+    x:Class="SevenPass.Entry.Views.BrowserView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    d:DataContext="{d:DesignData viewModels:BrowserViewModel}">
+
+    <WebView Name="View" Loaded="OnViewLoaded"
+        DOMContentLoaded="OnDomContentLoaded">
+        <FlyoutBase.AttachedFlyout>
+            <Flyout>
+                <ListView Name="Strings" SelectionChanged="OnSelectionChanged">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Key}"
+                                Style="{ThemeResource TitleTextBlockStyle}" />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Flyout>
+        </FlyoutBase.AttachedFlyout>
+    </WebView>
+
+    <Page.BottomAppBar>
+        <CommandBar>
+            <CommandBar.PrimaryCommands>
+                <AppBarButton Label="back" Icon="Back" Click="OnBackClicked"
+                    IsEnabled="{Binding ElementName=View, Path=CanGoBack}" />
+                <AppBarButton Label="refresh" Icon="Refresh" Click="OnRefreshClicked" />
+                <AppBarButton Label="stop" Icon="Cancel" Click="OnStopClicked" />
+                <AppBarButton Label="next" Icon="Forward" Click="OnForwardClicked"
+                    IsEnabled="{Binding ElementName=View, Path=CanGoForward}" />
+            </CommandBar.PrimaryCommands>
+
+            <CommandBar.SecondaryCommands>
+                <AppBarButton Label="type password" Click="OnTypePassword" />
+                <AppBarButton Label="type username" Click="OnTypeUserName" />
+                <AppBarButton Label="type field" Click="OnTypeField" />
+            </CommandBar.SecondaryCommands>
+        </CommandBar>
+    </Page.BottomAppBar>
+</Page>
