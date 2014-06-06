@@ -39,7 +39,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\ItemModelBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Resources.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\AutoMaps.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\BackButtonHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Cache\CacheService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Cache\CachedDatabase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Cache\ICacheService.cs" />

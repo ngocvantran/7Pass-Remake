@@ -78,12 +78,6 @@ namespace SevenPass
             var messages = new GlobalMessagesService();
             _events.Subscribe(messages);
             _container.Instance(messages);
-
-#if WINDOWS_PHONE_APP
-            _container
-                .GetInstance<BackButtonHandler>()
-                .Initialize();
-#endif
         }
 
         private void RegisterServices()
@@ -95,10 +89,6 @@ namespace SevenPass
             _container
                 .AssemblyContainingType<MainViewModel>()
                 .RegisterViewModels();
-
-#if WINDOWS_PHONE_APP
-            _container.Singleton<BackButtonHandler>();
-#endif
 
             _container.Instance(AutoMaps.Initialize());
             _container.Singleton<ICacheService, CacheService>();
